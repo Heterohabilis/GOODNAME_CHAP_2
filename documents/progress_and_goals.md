@@ -2,6 +2,8 @@
 
 ### Work Done
 
+Last semester, we have implemented CRUD for people, text, and manuscript with MongoDB. We also have the implementation of the FSM for the manuscript. 
+
 
 - Text:
 
@@ -16,22 +18,22 @@
 
 ### Goal for this semester  
 
-This semester our goal is to complete the journal website by using React to create frontend code using backend API, and add or change functionalities in the backend if needed.  
+This semester our goal is to complete the journal website by using React to create frontend code using backend API, and add or change functionalities in the backend if needed. Combining the frontend and backend, we will create a user-friendly journal website that can visualize the backend functionalities to the user. To achieve the different permissions for different users, we will work on the frontend to create different home pages for different users.
 
 
 - People:  
 
   - Users can edit and delete their own accounts.  
-      using update people and delete people API  
+      - using update people and delete people API  
 
   - Submitting a manuscript creates an account with the role of author  
-      using create people and assign role API  
+      - using create people and assign role API  
 
   - Assigning a referee to a manuscript adds the referee role to that person.
-      using edit role API, might have to add "add_referee" API to manuscript in backend  
+      - using edit role API, might have to add "add_referee" API to manuscript in backend  
 
   - Only the editor and managing editor(s) have create / update / delete permissions for the accounts of others.  
-      create different home page for editor account, frontend function with create_people, update_people, delete_people API only show in editor's home page  
+      - create different home page for editor account, frontend function with create_people, update_people, delete_people API only show in editor's home page  
 
 
   - Advanced: record a history of each user's interactions with the system.
