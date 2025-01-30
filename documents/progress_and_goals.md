@@ -34,11 +34,17 @@ This semester our goal is to complete the journal website by using React to crea
       create different home page for editor account, frontend function with create_people, update_people, delete_people API only show in editor's home page  
 
 
-  - Advanced: record a history of each user's interactions with the system.  
+  - Advanced: record a history of each user's interactions with the system.
+  
+      - Define interactions as an enum of strings. For each account, keep an array to maintain the interaction and the timestamp. 
 
   - A listing of all people is available, but only to the editor and managing editor(s).  
 
-  - A journal masthead can be generated from the database and displayed by the frontend.  
+    - Accounts with the "editor" flag have access to the people API with no input (unconditional). A button will be created to call this API.
+      
+  - A journal masthead can be generated from the database and displayed by the front end.
+
+    - A button will be created to call the get_masthead API to retrieve the mastheads.
 
 - Text:  
 
