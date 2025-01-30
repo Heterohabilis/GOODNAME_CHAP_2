@@ -42,11 +42,16 @@ This semester our goal is to complete the journal website by using React to crea
 
 - Text:  
 
-  -  These texts can be edited from the client application, but only by the editor and managing editor(s).  
+  -  These texts can be edited from the client application, but only by the editor and managing editor(s).
+    
+      - Only the accounts with the mark "editors" or "managing editors" have access to the "update_text" API.
 
 - Manuscript:  
 
-  - Only the editor and managing editor(s) see all manuscripts; everyone else only sees "their own." That means manuscripts for which they are the author or referee.  
+  - Only the editor and managing editor(s) see all manuscripts; everyone else only sees "their own." That means manuscripts for which they are the author or referee.
+ 
+    - After clicking the "browse manuscripts" button, the accounts with the mark "editors" or "managing editors" will call the "manuscript" API to retrieve ALL manuscripts, and the normal account can only call the "manuscript" API with the "ID" input with their own IDs.
 
-  - A dashboard will present the manuscripts in visual form.   
+  - A dashboard will present the manuscripts in visual form.
+    - Retrieving the manuscript data structure, reading the history entry, and using the plot library to produce the visual form.
 
