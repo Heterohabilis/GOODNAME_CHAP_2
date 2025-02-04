@@ -63,3 +63,30 @@ This semester our goal is to complete the journal website by using React to crea
   - A dashboard will present the manuscripts in visual form.
     - Retrieving the manuscript data structure, reading the history entry, and using the plot library to produce the visual form.
 
+
+## Webpage design
+
+- Sign Up/Login Page
+
+  - Sign Up Fields: Email, Password, Confirm Password, First Name, Last Name, Affiliation
+  - Sign Up Button
+  - Login Fields: Email, Password
+  - Login Button
+- Home Page
+- Masthead Page
+- Submission Page
+
+  - Submission Fields: Title, Author, Author email, Abstract, File Upload(text), Editor(Submit here?)
+  - Submit Button
+  - Cancel Button
+
+- Manuscripts Page (handle the manuscript FSM)
+
+
+# Week Feb 3 - Feb 9
+
+## Weekly Goals
+
+- Finish the design of the Sign Up/Login Page.
+- Finish the design of the initial submit for Submission Page.
+- Reflect the different roles and permissions that will be needed for the FSM workflow.
