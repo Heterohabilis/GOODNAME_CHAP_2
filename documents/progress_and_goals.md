@@ -80,7 +80,7 @@ This semester our goal is to complete the journal website by using React to crea
   - Submit Button
   - Cancel Button
 
-- Manuscripts Page (handle the manuscript FSM)
+- Dashboard (handle the manuscript FSM)
 
 
 # Week Feb 3 - Feb 9
@@ -88,5 +88,5 @@ This semester our goal is to complete the journal website by using React to crea
 ## Weekly Goals
 
 - Finish the design of the Sign Up/Login Page.
-- Finish the design of the initial submit for Submission Page.
-- Reflect the different roles and permissions that will be needed for the FSM workflow.
+- Create the preliminary frontend dashboard for the manuscript FSM.
+- Refine the backend design for FSM of the manuscript.
