@@ -10,6 +10,7 @@ import './App.css';
 
 import Navbar from './Components/Navbar';
 import People from './Components/People';
+import Manuscripts from './Components/Manuscript';
 
 const homeHeader = "Journal of React";
 function Home() {
@@ -25,6 +26,7 @@ function PersonPage() {
   return <h1>{name}</h1>
 }
 
+
 function App() {
   return (
     <BrowserRouter>
@@ -35,6 +37,7 @@ function App() {
          <Route index element={<Home />} />
         <Route path="people" element={<People />} />
         <Route path="people/:name" element={<PersonPage />} />
+        <Route path="manuscripts" element={<Manuscripts />} />
       </Routes>
     </BrowserRouter>
   );
