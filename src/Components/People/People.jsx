@@ -20,12 +20,18 @@ function AddPersonForm({ visible, cancel, fetchPeople, setError }) {
     const changeAffiliation = (event) => setAffiliation(event.target.value);
     const changeRoles = (event) => setRoles(event.target.value);
 
-    const addPerson = (event) => {
+
+    // I made this async so that we don't need to manually refresh the page after we submit
+    const addPerson = async (event) => {
         event.preventDefault();
         const newPerson = { name, email, affiliation, roles };
-        axios.put(PEOPLE_CREATE_ENDPOINT, newPerson)
-            .then(fetchPeople)
-            .catch((error) => setError(`There was a problem adding the person. ${error}`));
+        try {
+            await axios.put(PEOPLE_CREATE_ENDPOINT, newPerson);
+            fetchPeople(); // Refresh the list
+            cancel(); // Close the form
+        } catch (error) {
+            setError(`There was a problem adding the person. ${error}`);
+        }
     };
 
     if (!visible) return null;
