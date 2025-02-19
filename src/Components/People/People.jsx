@@ -7,42 +7,50 @@ import { BACKEND_URL } from '../../constants';
 
 const PEOPLE_READ_ENDPOINT = `${BACKEND_URL}/people`;
 const PEOPLE_CREATE_ENDPOINT = `${BACKEND_URL}/people/create`;
-// For updating people
 const PEOPLE_UPDATE_ENDPOINT = `${BACKEND_URL}/people`;
 
 function AddPersonForm({ visible, cancel, fetchPeople, setError }) {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [affiliation, setAffiliation] = useState('');
+    const [roles, setRoles] = useState('');
 
-  const changeName = (event) => setName(event.target.value);
-  const changeEmail = (event) => setEmail(event.target.value);
+    const changeName = (event) => setName(event.target.value);
+    const changeEmail = (event) => setEmail(event.target.value);
+    const changeAffiliation = (event) => setAffiliation(event.target.value);
+    const changeRoles = (event) => setRoles(event.target.value);
 
-  const addPerson = (event) => {
-    event.preventDefault();
-    const newPerson = { name, email };
-    axios.put(PEOPLE_CREATE_ENDPOINT, newPerson)
-        .then(fetchPeople)
-        .catch((error) => setError(`There was a problem adding the person. ${error}`));
-  };
+    const addPerson = (event) => {
+        event.preventDefault();
+        const newPerson = { name, email, affiliation, roles };
+        axios.put(PEOPLE_CREATE_ENDPOINT, newPerson)
+            .then(fetchPeople)
+            .catch((error) => setError(`There was a problem adding the person. ${error}`));
+    };
 
-  if (!visible) return null;
-  return (
-      <form onSubmit={addPerson}>
-        <label htmlFor="name">Name</label>
-        <input required type="text" id="name" value={name} onChange={changeName} />
-        <label htmlFor="email">Email</label>
-        <input required type="text" id="email" value={email} onChange={changeEmail} />
-        <button type="button" onClick={cancel}>Cancel</button>
-        <button type="submit">Submit</button>
-      </form>
-  );
+    if (!visible) return null;
+    return (
+        <form onSubmit={addPerson}>
+            <label htmlFor="name">Name</label>
+            <input required type="text" id="name" value={name} onChange={changeName} />
+            <label htmlFor="email">Email</label>
+            <input required type="text" id="email" value={email} onChange={changeEmail} />
+            <label htmlFor="affiliation">Affiliation</label>
+            <input required type="text" id="affiliation" value={affiliation} onChange={changeAffiliation} />
+            <label htmlFor="roles">Roles</label>
+            <input required type="text" id="roles" value={roles} onChange={changeRoles} />
+            <button type="button" onClick={cancel}>Cancel</button>
+            <button type="submit">Submit</button>
+        </form>
+    );
 }
 AddPersonForm.propTypes = {
-  visible: propTypes.bool.isRequired,
-  cancel: propTypes.func.isRequired,
-  fetchPeople: propTypes.func.isRequired,
-  setError: propTypes.func.isRequired,
+    visible: propTypes.bool.isRequired,
+    cancel: propTypes.func.isRequired,
+    fetchPeople: propTypes.func.isRequired,
+    setError: propTypes.func.isRequired,
 };
+
 
 function ErrorMessage({ message }) {
   return <div className="error-message">{message}</div>;
