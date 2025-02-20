@@ -12,6 +12,7 @@ import Navbar from './Components/Navbar';
 import People from './Components/People';
 import Manuscripts from './Components/Manuscript';
 import Texts from './Components/Texts'
+import About from './Components/About'
 
 const homeHeader = "Journal of React";
 function Home() {
@@ -40,6 +41,7 @@ function App() {
         <Route path="people/:name" element={<PersonPage />} />
         <Route path="manuscripts" element={<Manuscripts />} />
         <Route path="texts" element={<Texts />} />
+        <Route path="about" element={<About />} />
       </Routes>
     </BrowserRouter>
   );
