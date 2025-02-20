@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import propTypes from 'prop-types';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
 
 import { BACKEND_URL } from '../../constants';
 
@@ -31,18 +31,18 @@ function AddManuscriptForm({ visible, cancel, fetchManuscripts, setError }) {
     if (!visible) return null;
     return (
         <form onSubmit={addManuscript}>
-            <label htmlFor="title">Title</label>
-            <input required type="text" id="title" value={title} onChange={(e) => setTitle(e.target.value)} />
-            <label htmlFor="author">Author</label>
-            <input required type="text" id="author" value={author} onChange={(e) => setAuthor(e.target.value)} />
-            <label htmlFor="authorEmail">Author Email</label>
-            <input required type="email" id="authorEmail" value={authorEmail} onChange={(e) => setAuthorEmail(e.target.value)} />
-            <label htmlFor="text">Text</label>
-            <textarea required id="text" value={text} onChange={(e) => setText(e.target.value)}></textarea>
-            <label htmlFor="abstract">Abstract</label>
-            <textarea required id="abstract" value={abstract} onChange={(e) => setAbstract(e.target.value)}></textarea>
-            <label htmlFor="editor">Editor</label>
-            <input required type="text" id="editor" value={editor} onChange={(e) => setEditor(e.target.value)} />
+            <label>Title</label>
+            <input required type="text" value={title} onChange={(e) => setTitle(e.target.value)} />
+            <label>Author</label>
+            <input required type="text" value={author} onChange={(e) => setAuthor(e.target.value)} />
+            <label>Author Email</label>
+            <input required type="email" value={authorEmail} onChange={(e) => setAuthorEmail(e.target.value)} />
+            <label>Text</label>
+            <textarea required value={text} onChange={(e) => setText(e.target.value)}></textarea>
+            <label>Abstract</label>
+            <textarea required value={abstract} onChange={(e) => setAbstract(e.target.value)}></textarea>
+            <label>Editor</label>
+            <input required type="text" value={editor} onChange={(e) => setEditor(e.target.value)} />
             <button type="button" onClick={cancel}>Cancel</button>
             <button type="submit">Submit</button>
         </form>
@@ -56,44 +56,6 @@ AddManuscriptForm.propTypes = {
     setError: propTypes.func.isRequired,
 };
 
-function manuscriptsObjectToArray(Data) {
-    return Object.values(Data);
-}
-function Manuscript({ manuscript, fetchManuscripts, setUpdatingManuscript }) {
-    const { id, title, author, author_email } = manuscript;
-
-    const deleteManuscript = () => {
-        axios.delete(`${MANUSCRIPT_READ_ENDPOINT}/${id}`)
-            .then(fetchManuscripts)
-            .catch((error) => console.log(`There was a problem deleting the manuscript. ${error}`));
-    };
-
-    return (
-        <div>
-            <Link to={title}>
-                <div className="manuscript-container">
-                    <h2>{title}</h2>
-                    <p>Author: {author}</p>
-                    <p>Email: {author_email}</p>
-                </div>
-            </Link>
-            <button onClick={deleteManuscript} style={{ marginRight: '10px' }}>Delete manuscript</button>
-            <button onClick={() => setUpdatingManuscript(manuscript)}>Update manuscript</button>
-        </div>
-    );
-}
-
-Manuscript.propTypes = {
-    manuscript: propTypes.shape({
-        id: propTypes.oneOfType([propTypes.string, propTypes.number]).isRequired,
-        title: propTypes.string.isRequired,
-        author: propTypes.string.isRequired,
-        author_email: propTypes.string.isRequired,
-    }).isRequired,
-    fetchManuscripts: propTypes.func.isRequired,
-    setUpdatingManuscript: propTypes.func.isRequired,
-};
-
 function Manuscripts() {
     const [error, setError] = useState('');
     const [manuscripts, setManuscripts] = useState([]);
@@ -101,8 +63,8 @@ function Manuscripts() {
 
     const fetchManuscripts = () => {
         axios.get(MANUSCRIPT_READ_ENDPOINT)
-            .then(({ data }) => setManuscripts(manuscriptsObjectToArray(data)))
-            .catch((error) => setError(`There was a problem retrieving the list of manuscripts. ${error}`));
+            .then(({ data }) => setManuscripts(Object.values(data)))
+            .catch((error) => setError(`There was a problem retrieving the manuscripts. ${error}`));
     };
 
     useEffect(fetchManuscripts, []);
@@ -122,8 +84,14 @@ function Manuscripts() {
                 />
             )}
             {error && <div className="error-message">{error}</div>}
-            {manuscripts.map((manuscript) => (
-                <Manuscript key={manuscript.title} manuscript={manuscript} fetchManuscripts={fetchManuscripts} />
+            {manuscripts.map((manuscript, index) => (
+                <div key={index} className="manuscript-container">
+                    <h2>{manuscript.title}</h2>
+                    <p>Author: {manuscript.author}</p>
+                    <p>Email: {manuscript.author_email}</p>
+                    <p>Abstract: {manuscript.abstract}</p>
+                    <p>Editor: {manuscript.editor}</p>
+                </div>
             ))}
         </div>
     );
