@@ -61,38 +61,38 @@ function manuscriptsObjectToArray(Data) {
 }
 function Manuscript({ manuscript, fetchManuscripts, setUpdatingManuscript }) {
     const { id, title, author, author_email } = manuscript;
-  
+
     const deleteManuscript = () => {
-      axios.delete(`${MANUSCRIPT_READ_ENDPOINT}/${id}`)
-          .then(fetchManuscripts)
-          .catch((error) => console.log(`There was a problem deleting the manuscript. ${error}`));
+        axios.delete(`${MANUSCRIPT_READ_ENDPOINT}/${id}`)
+            .then(fetchManuscripts)
+            .catch((error) => console.log(`There was a problem deleting the manuscript. ${error}`));
     };
-  
+
     return (
         <div>
-          <Link to={title}>
-            <div className="manuscript-container">
-              <h2>{title}</h2>
-              <p>Author: {author}</p>
-              <p>Email: {author_email}</p>
-            </div>
-          </Link>
-          <button onClick={deleteManuscript} style={{ marginRight: '10px' }}>Delete manuscript</button>
-          <button onClick={() => setUpdatingManuscript(manuscript)}>Update manuscript</button>
+            <Link to={title}>
+                <div className="manuscript-container">
+                    <h2>{title}</h2>
+                    <p>Author: {author}</p>
+                    <p>Email: {author_email}</p>
+                </div>
+            </Link>
+            <button onClick={deleteManuscript} style={{ marginRight: '10px' }}>Delete manuscript</button>
+            <button onClick={() => setUpdatingManuscript(manuscript)}>Update manuscript</button>
         </div>
     );
-  }
-  
-  Manuscript.propTypes = {
+}
+
+Manuscript.propTypes = {
     manuscript: propTypes.shape({
-      id: propTypes.oneOfType([propTypes.string, propTypes.number]).isRequired,
-      title: propTypes.string.isRequired,
-      author: propTypes.string.isRequired,
-      author_email: propTypes.string.isRequired,
+        id: propTypes.oneOfType([propTypes.string, propTypes.number]).isRequired,
+        title: propTypes.string.isRequired,
+        author: propTypes.string.isRequired,
+        author_email: propTypes.string.isRequired,
     }).isRequired,
     fetchManuscripts: propTypes.func.isRequired,
     setUpdatingManuscript: propTypes.func.isRequired,
-  };
+};
 
 function Manuscripts() {
     const [error, setError] = useState('');
