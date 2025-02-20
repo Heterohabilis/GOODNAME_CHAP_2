@@ -11,10 +11,11 @@ import './App.css';
 import Navbar from './Components/Navbar';
 import People from './Components/People';
 import Manuscripts from './Components/Manuscript';
+import Texts from './Components/Texts'
 
 const homeHeader = "Journal of React";
 function Home() {
-  
+
   const styles = {
     'text-align': 'center',
   }
@@ -34,10 +35,11 @@ function App() {
       <Routes>
         {/* For a different home page, do:
          <Route index element={<Login />} /> */}
-         <Route index element={<Home />} />
+        <Route index element={<Home />} />
         <Route path="people" element={<People />} />
         <Route path="people/:name" element={<PersonPage />} />
         <Route path="manuscripts" element={<Manuscripts />} />
+        <Route path="texts" element={<Texts />} />
       </Routes>
     </BrowserRouter>
   );

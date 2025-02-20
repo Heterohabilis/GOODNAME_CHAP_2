@@ -63,8 +63,8 @@ function textObjectToArray(Data) {
     return Object.values(Data);
 }
 
-function Text({ text, fetchTexts }) {
-    const { title, text, email } = text;
+function Text({ textItem }) {
+    const { title, text, email } = textItem;
     return (
         <div>
             <Link to={title}>
@@ -77,6 +77,14 @@ function Text({ text, fetchTexts }) {
         </div>
     );
 }
+
+Text.propTypes = {
+    textItem: propTypes.shape({
+        title: propTypes.string.isRequired,
+        text: propTypes.string.isRequired,
+        email: propTypes.string.isRequired,
+    }).isRequired,
+};
 
 function Texts() {
     const [error, setError] = useState('');
@@ -107,9 +115,10 @@ function Texts() {
             )}
             {error && <ErrorMessage message={error} />}
             {text.map((text) => (
-                <Text key={text.title} text={text} fetchTexts={fetchTexts} />
+                <Text key={text.title} textItem={text} fetchTexts={fetchTexts} />
             ))}
         </div>
     );
 }
+
 export default Texts;
