@@ -35,7 +35,7 @@ function AddTextForm({ visible, cancel, fetchTexts, setError }) {
             <label htmlFor="text">Text</label>
             <input required type="text" id="text" value={text} onChange={changeText} />
             <label htmlFor="email">Email</label>
-            <input required type="text" id="authorEmail" value={authorEmail} onChange={changeEmail} />
+            <input required type="text" id="email" value={authorEmail} onChange={changeEmail} />
             <button type="button" onClick={cancel}>Cancel</button>
             <button type="submit">Submit</button>
         </form>
