@@ -2,12 +2,18 @@ import React from 'react';
 import propTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
+const homeTitle = 'Home'
+const peopleTitle = 'View All People'
+const manuscriptTitle = 'View All Manuscripts'
+const textTitle = 'Text'
+const aboutTitle = 'About'
+
 const PAGES = [
-  { label: 'Home', destination: '/' },
-  { label: 'View All People', destination: '/people' },
-  { label: 'View All Manuscripts', destination: '/manuscripts' },
-  { label: 'Text', destination: '/texts'},
-  { label: 'About', destination: '/about'},
+  { label: homeTitle, destination: '/' },
+  { label: peopleTitle, destination: '/people' },
+  { label: manuscriptTitle, destination: '/manuscripts' },
+  { label: textTitle, destination: '/texts'},
+  { label: aboutTitle, destination: '/about'},
   // { label: 'Submit Manuscript', destination: '/manuscripts/create' },
 ];
 
@@ -37,3 +43,11 @@ function Navbar() {
 }
 
 export default Navbar;
+
+export {
+  homeTitle,
+  peopleTitle,
+  manuscriptTitle,
+  textTitle,
+  aboutTitle,
+}

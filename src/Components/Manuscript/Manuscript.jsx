@@ -56,6 +56,9 @@ AddManuscriptForm.propTypes = {
     setError: propTypes.func.isRequired,
 };
 
+const manuscriptHeader = 'View All Manuscripts'
+const manuscriptButton = 'Add a Manuscript'
+
 function Manuscripts() {
     const [error, setError] = useState('');
     const [manuscripts, setManuscripts] = useState([]);
@@ -72,8 +75,8 @@ function Manuscripts() {
     return (
         <div className="wrapper">
             <header>
-                <h1>View All Manuscripts</h1>
-                <button type="button" onClick={() => setAddingManuscript(true)}>Add a Manuscript</button>
+                <h1>{manuscriptHeader}</h1>
+                <button type="button" onClick={() => setAddingManuscript(true)}>{manuscriptButton}</button>
             </header>
             {addingManuscript && (
                 <AddManuscriptForm
@@ -98,3 +101,8 @@ function Manuscripts() {
 }
 
 export default Manuscripts;
+
+export {
+    manuscriptHeader,
+    manuscriptButton,
+}
