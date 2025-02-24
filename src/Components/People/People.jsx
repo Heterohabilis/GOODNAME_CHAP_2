@@ -186,17 +186,19 @@ function People() {
         )}
         {error && <ErrorMessage message={error} />}
         {people.map((person) => (
-            <Person key={person.email} person={person} fetchPeople={fetchPeople} setUpdatingPerson={setUpdatingPerson} />
-        ))}
-        {updatingPerson && (
+        <div key={person.email}>
+          <Person person={person} fetchPeople={fetchPeople} setUpdatingPerson={setUpdatingPerson} />
+          {updatingPerson?.email === person.email && (
             <UpdatePersonForm
-                visible={!!updatingPerson}
-                person={updatingPerson}
-                cancel={() => setUpdatingPerson(null)}
-                fetchPeople={fetchPeople}
-                setError={setError}
+              visible={true}
+              person={updatingPerson}
+              cancel={() => setUpdatingPerson(null)}
+              fetchPeople={fetchPeople}
+              setError={setError}
             />
-        )}
+          )}
+        </div>
+      ))}
       </div>
   );
 }
