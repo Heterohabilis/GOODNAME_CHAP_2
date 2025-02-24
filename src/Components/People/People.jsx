@@ -132,7 +132,7 @@ function Person({ person, fetchPeople, setUpdatingPerson }) {
 
   return (
       <div>
-        <Link to={name}>
+        <Link to={email}>
           <div className="person-container">
             <h2>{name}</h2>
             <p>Email: {email}</p>

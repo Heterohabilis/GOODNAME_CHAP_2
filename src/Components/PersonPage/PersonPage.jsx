@@ -6,15 +6,15 @@ import { BACKEND_URL } from '../../constants';
 const PEOPLE_READ_ENDPOINT = `${BACKEND_URL}/people`;
 
 function PersonPage() {
-  const { name } = useParams();
+  const { email } = useParams();
   const [person, setPerson] = useState(null);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    axios.get(`${PEOPLE_READ_ENDPOINT}/${name}`)
+    axios.get(`${PEOPLE_READ_ENDPOINT}/${email}`)
       .then(({ data }) => setPerson(data))
       .catch((err) => setError(`Error fetching person details: ${err.message}`));
-  }, [name]);
+  }, [email]);
 
   if (error) {
     return <div>{error}</div>;

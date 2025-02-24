@@ -37,7 +37,7 @@ function App() {
          <Route index element={<Login />} /> */}
          <Route index element={<Home />} />
         <Route path="people" element={<People />} />
-        <Route path="people/:name" element={<PersonPage />} />
+        <Route path="people/:email" element={<PersonPage />} />
         <Route path="manuscripts" element={<Manuscripts />} />
       </Routes>
     </BrowserRouter>
