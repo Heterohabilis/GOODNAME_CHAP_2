@@ -83,10 +83,16 @@ This semester our goal is to complete the journal website by using React to crea
 - Dashboard (handle the manuscript FSM)
 
 
-# Week Feb 3 - Feb 9
+## To Do List:
+- Roles
+  - Dropdown List, allow multiple roles selection
+  - Map role name to abbreviation
 
-## Weekly Goals
+- Manuscript 
+  - Larger box for text by default
+  - Display text
 
-- Finish the design of the Sign Up/Login Page.
-- Create the preliminary frontend dashboard for the manuscript FSM.
-- Refine the backend design for FSM of the manuscript.
+- Submission page
+
+- People
+  - Button design: trash can and pencil (optional)
