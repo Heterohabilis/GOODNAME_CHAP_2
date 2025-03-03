@@ -4,6 +4,13 @@ import axios from 'axios';
 import { BACKEND_URL } from '../../constants';
 
 const PEOPLE_READ_ENDPOINT = `${BACKEND_URL}/people`;
+const AVAILABLE_ROLES = {
+  'AU': 'Author',
+  'ED': 'Editor',
+  'ME': 'Managing Editor',
+  'CE': 'Copy Editor',
+  'RE': 'Referee',
+};
 
 function PersonPage() {
   const { email } = useParams();
@@ -23,11 +30,15 @@ function PersonPage() {
   if (!person) {
     return <div>Loading...</div>;
   }
+  let toBePrinted = [];
+  for(var i = 0; i < person.roles.length; i++) {
+    toBePrinted.push(AVAILABLE_ROLES[person.roles[i]]);
+  }
 
   return (
     <div style={{ textAlign: "center" }}>
       <h1>{person.name}</h1>
-      <p><strong>Role:</strong> {person.roles?.join(', ') || 'Unknown'}</p>
+      <p><strong>Role:</strong> {toBePrinted?.join(', ') || 'Unknown'}</p>
       <p><strong>Affiliation:</strong> {person.affiliation || 'Unknown'}</p>
     </div>
   );
