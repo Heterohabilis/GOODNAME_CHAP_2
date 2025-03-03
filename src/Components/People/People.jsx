@@ -81,41 +81,55 @@ ErrorMessage.propTypes = {
 
 
 function UpdatePersonForm({ visible, person, cancel, fetchPeople, setError }) {
-  const [name, setName] = useState(person.name);
-  const [affiliation, setAffiliation] = useState(person.affiliation || '');
-  const [roles, setRoles] = useState(person.roles || []);
+    const [name, setName] = useState(person.name);
+    const [affiliation, setAffiliation] = useState(person.affiliation || '');
+    const [roles, setRoles] = useState(person.roles || []);
 
-  const updatePerson = (event) => {
-    event.preventDefault();
-    const updatedPerson = { name, affiliation, roles };
-    axios.put(`${PEOPLE_UPDATE_ENDPOINT}/${person.email}`, updatedPerson)
-        .then(() => {
-          fetchPeople();
-          cancel();
-        })
-        .catch((error) => setError(`Could not update person: ${error.response?.data?.message || error.message}`));
-  };
+    const availableRoles = {
+        'AU': 'Author',
+        'ED': 'Editor',
+        'ME': 'Managing Editor',
+        'CE': 'Copy Editor',
+        'RE': 'Referee',
+    };
 
-  if (!visible) return null;
-  return (
-      <form onSubmit={updatePerson}>
-        <h3>Update Person</h3>
-        <label>Name</label>
-        <input type="text" required value={name} onChange={(e) => setName(e.target.value)} />
-        <label>Affiliation</label>
-        <input type="text" required value={affiliation} onChange={(e) => setAffiliation(e.target.value)} />
-        <label>Roles</label>
-        {roles.map((role, index) => (
-            <div key={index}>
-              <input type="text" value={role} onChange={(e) => setRoles(roles.map((r, i) => i === index ? e.target.value : r))} />
-              <button type="button" onClick={() => setRoles(roles.filter((_, i) => i !== index))}>Remove</button>
-            </div>
-        ))}
-        <button type="button" onClick={() => setRoles([...roles, ''])}>Add Role</button>
-        <button type="button" onClick={cancel}>Cancel</button>
-        <button type="submit">Update</button>
-      </form>
-  );
+    const updatePerson = (event) => {
+        event.preventDefault();
+        const updatedPerson = { name, affiliation, roles };
+        axios.put(`${PEOPLE_UPDATE_ENDPOINT}/${person.email}`, updatedPerson)
+            .then(() => {
+                fetchPeople();
+                cancel();
+            })
+            .catch((error) => setError(`Could not update person: ${error.response?.data?.message || error.message}`));
+    };
+
+    if (!visible) return null;
+    return (
+        <form onSubmit={updatePerson}>
+            <h3>Update Person</h3>
+            <label>Name</label>
+            <input type="text" required value={name} onChange={(e) => setName(e.target.value)} />
+            <label>Affiliation</label>
+            <input type="text" required value={affiliation} onChange={(e) => setAffiliation(e.target.value)} />
+
+            <label>Roles</label>
+            {roles.map((role, index) => (
+                <div key={index} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <select value={role} onChange={(e) => setRoles(roles.map((r, i) => i === index ? e.target.value : r))}>
+                        <option value="" disabled>Select a role</option>
+                        {Object.entries(availableRoles).map(([code, name]) => (
+                            <option key={code} value={code}>{name}</option>
+                        ))}
+                    </select>
+                    <button type="button" onClick={() => setRoles(roles.filter((_, i) => i !== index))}>Remove</button>
+                </div>
+            ))}
+            <button type="button" onClick={() => setRoles([...roles, ''])}>Add Role</button>
+            <button type="button" onClick={cancel}>Cancel</button>
+            <button type="submit">Update</button>
+        </form>
+    );
 }
 
 // prototypes
