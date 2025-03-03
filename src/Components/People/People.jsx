@@ -4,6 +4,8 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 
 import { BACKEND_URL } from '../../constants';
+import AddIcon from './add.svg'; // Import the SVG file
+
 
 const PEOPLE_READ_ENDPOINT = `${BACKEND_URL}/people`;
 const PEOPLE_CREATE_ENDPOINT = `${BACKEND_URL}/people/create`;
@@ -174,7 +176,9 @@ function People() {
       <div className="wrapper">
         <header>
           <h1>View All People</h1>
-          <button type="button" onClick={() => setAddingPerson(true)}>Add a Person</button>
+            <button type="button" onClick={() => setAddingPerson(true)} style={{ border: 'none', background: 'transparent', padding: 0 }}>
+                <img src={AddIcon} alt="Add a Person" style={{ width: '32px', height: '32px' }} />
+            </button>
         </header>
         {addingPerson && (
             <AddPersonForm
