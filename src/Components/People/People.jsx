@@ -5,6 +5,8 @@ import { Link } from 'react-router-dom';
 
 import { BACKEND_URL } from '../../constants';
 import AddIcon from './add.svg';
+import TrashIcon from './trash.svg';
+import PencilIcon from './pencil.svg';
 
 
 const PEOPLE_READ_ENDPOINT = `${BACKEND_URL}/people`;
@@ -165,8 +167,12 @@ function Person({ person, fetchPeople, setUpdatingPerson }) {
             <p>Email: {email}</p>
           </div>
         </Link>
-        <button onClick={deletePerson} style={{ marginRight: '10px' }}>Delete person</button>
-        <button onClick={() => setUpdatingPerson(person)}>Update person</button>
+        <button onClick={deletePerson} style={{ marginRight: '10px' }}>
+            <img src={TrashIcon} alt="Delete" style={{ width: '24px', height: '24px' }} />
+        </button>
+        <button onClick={() => setUpdatingPerson(person)}>
+            <img src={PencilIcon} alt="Edit" style={{ width: '24px', height: '24px' }} />
+        </button>
       </div>
   );
 }
