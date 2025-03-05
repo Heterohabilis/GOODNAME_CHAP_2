@@ -201,7 +201,8 @@ const config = {
   },
 
   transform: {
-  "\\.[jt]sx?$": "babel-jest"
+  "\\.[jt]sx?$": "babel-jest",
+  "\\.(svg|jpg|jpeg|png|gif|ttf|woff|woff2|eot)$": "jest-transform-stub"
   },
 
   transformIgnorePatterns: ["node_modules/(?!axios|@bundled-es-modules|jest-fixed-jsdom)"],
