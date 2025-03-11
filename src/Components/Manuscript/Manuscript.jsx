@@ -38,9 +38,9 @@ function AddManuscriptForm({ visible, cancel, fetchManuscripts, setError }) {
             <label>Author Email</label>
             <input required type="email" value={authorEmail} onChange={(e) => setAuthorEmail(e.target.value)} />
             <label>Text</label>
-            <textarea required value={text} onChange={(e) => setText(e.target.value)}></textarea>
+            <textarea required rows="20" cols="80" value={text} onChange={(e) => setText(e.target.value)}></textarea>
             <label>Abstract</label>
-            <textarea required value={abstract} onChange={(e) => setAbstract(e.target.value)}></textarea>
+            <textarea required rows="10" cols="80" value={abstract} onChange={(e) => setAbstract(e.target.value)}></textarea>
             <label>Editor</label>
             <input required type="text" value={editor} onChange={(e) => setEditor(e.target.value)} />
             <button type="button" onClick={cancel}>Cancel</button>
