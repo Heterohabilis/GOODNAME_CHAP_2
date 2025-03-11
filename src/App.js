@@ -15,15 +15,8 @@ import Texts from './Components/Texts'
 import About from './Components/About'
 import PersonPage from './Components/PersonPage';
 import Masthead from "./Components/Masthead";
+import Home from "./Components/Home";
 
-const homeHeader = "Journal of React";
-function Home() {
-  
-  const styles = {
-    'text-align': 'center',
-  }
-  return <h1 style={styles} >{homeHeader}</h1>
-}
 
 // function PersonPage() {
 //   const { name } = useParams();
@@ -38,7 +31,7 @@ function App() {
       <Routes>
         {/* For a different home page, do:
          <Route index element={<Login />} /> */}
-         <Route index element={<Home />} />
+        <Route path="/" element={<Home />} />
         <Route path="people" element={<People />} />
         <Route path="people/:email" element={<PersonPage />} />
         <Route path="masthead" element={<Masthead />} />
@@ -52,6 +45,3 @@ function App() {
 
 export default App;
 
-export {
-  homeHeader,
-}
