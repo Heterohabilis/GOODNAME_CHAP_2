@@ -11,14 +11,17 @@ function Masthead() {
     const fetchMasthead = () => {
         axios.get(MASTHEAD_ENDPOINT)
             .then(({ data }) => {
-                console.log("API Response:", data); // Debugging: check actual response format
-
-                if (data && typeof data === "object") {
-                    // Find the first key in data (e.g., "Masthead")
+                if (data && typeof data === "object" && Object.keys(data).length > 0) {
                     const mastheadData = Object.values(data)[0];
+
                     if (mastheadData && typeof mastheadData === "object") {
                         setMasthead(Object.entries(mastheadData));
+                        setError(null);
+                    } else {
+                        setError("Invalid masthead data format");
                     }
+                } else {
+                    setError("Invalid response format: Data is empty or not an object");
                 }
             })
             .catch((error) => setError(`Failed to fetch masthead roles: ${error.message}`));
