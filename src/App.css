@@ -105,11 +105,13 @@ nav ul {
   display: flex;
   gap: 2rem;
   padding: 0;
+  margin: 0;
 }
 
 nav a {
   color: var(--background-color);
-  display: block;
+  display: flex;
+  align-items: center;
   --padding: 1rem;
   padding: var(--padding);
   text-decoration: none;
@@ -117,6 +119,8 @@ nav a {
   --border-radius: 15px;
   border-radius: 5px 5px 0 0;
   position: relative;
+  height: 3rem; /* Fixed height for all nav items */
+  line-height: 1;
 }
 nav a:hover::before,
 nav a:focus::before {
