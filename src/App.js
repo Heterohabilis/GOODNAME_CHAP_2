@@ -14,6 +14,7 @@ import Manuscripts from './Components/Manuscript';
 import Texts from './Components/Texts'
 import About from './Components/About'
 import PersonPage from './Components/PersonPage';
+import Masthead from "./Components/Masthead";
 
 const homeHeader = "Journal of React";
 function Home() {
@@ -40,6 +41,7 @@ function App() {
          <Route index element={<Home />} />
         <Route path="people" element={<People />} />
         <Route path="people/:email" element={<PersonPage />} />
+        <Route path="masthead" element={<Masthead />} />
         <Route path="manuscripts" element={<Manuscripts />} />
         <Route path="texts" element={<Texts />} />
         <Route path="about" element={<About />} />

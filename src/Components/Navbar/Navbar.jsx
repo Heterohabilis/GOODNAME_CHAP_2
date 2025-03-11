@@ -2,15 +2,18 @@ import React from 'react';
 import propTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
+
 const homeTitle = 'Home'
 const peopleTitle = 'View All People'
 const manuscriptTitle = 'View All Manuscripts'
 const textTitle = 'Text'
 const aboutTitle = 'About'
+const mastheadTitle = 'Masthead'
 
 const PAGES = [
   { label: homeTitle, destination: '/' },
   { label: peopleTitle, destination: '/people' },
+  { label: mastheadTitle, destination: '/masthead' },
   { label: manuscriptTitle, destination: '/manuscripts' },
   { label: textTitle, destination: '/texts'},
   { label: aboutTitle, destination: '/about'},
@@ -50,4 +53,5 @@ export {
   manuscriptTitle,
   textTitle,
   aboutTitle,
+  mastheadTitle,
 }
