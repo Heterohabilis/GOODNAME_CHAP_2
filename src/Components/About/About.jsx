@@ -20,7 +20,9 @@ function AddTextForm({ visible, cancel, fetchTexts, setError }) {
         event.preventDefault();
         const newText = { title, text, authorEmail };
         try {
-            await axios.put(TEXT_CREATE_ENDPOINT, newText);
+            await axios.put(TEXT_CREATE_ENDPOINT, newText, {
+                headers: { 'Content-Type': 'application/json' }
+            });
             fetchTexts(); // Refresh the list
             cancel(); // Close the form
         } catch (error) {
@@ -33,10 +35,13 @@ function AddTextForm({ visible, cancel, fetchTexts, setError }) {
         <form onSubmit={addText}>
             <label htmlFor="title">Title</label>
             <input required type="text" id="title" value={title} onChange={changeTitle} />
-            <label htmlFor="text">Text</label>
-            <input required type="text" id="text" value={text} onChange={changeText} />
+
             <label htmlFor="email">Email</label>
             <input required type="text" id="email" value={authorEmail} onChange={changeEmail} />
+
+            <label htmlFor="text">Text</label>
+            <textarea required id="text" value={text} onChange={changeText} rows="6" cols="50" />
+
             <button type="button" onClick={cancel}>Cancel</button>
             <button type="submit">Submit</button>
         </form>
@@ -53,6 +58,7 @@ AddTextForm.propTypes = {
 function ErrorMessage({ message }) {
     return <div className="error-message">{message}</div>;
 }
+
 ErrorMessage.propTypes = {
     message: propTypes.string.isRequired,
 };
@@ -66,7 +72,11 @@ function UpdateTextForm({ visible, textData, cancel, fetchTexts, setError }) {
         event.preventDefault();
         const updatedText = { title, text, authorEmail };
         try {
-            await axios.put(`${TEXT_UPDATE_ENDPOINT}/${authorEmail}`, updatedText);
+            await axios.put(
+                `${TEXT_UPDATE_ENDPOINT}/${title}`,
+                updatedText,
+                { headers: { 'Content-Type': 'application/json' } }
+            );
             fetchTexts();
             cancel();
         } catch (error) {
@@ -78,12 +88,25 @@ function UpdateTextForm({ visible, textData, cancel, fetchTexts, setError }) {
     return (
         <form onSubmit={updateText}>
             <h3>Update Text</h3>
+
             <label>Title</label>
             <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} />
-            <label>Text</label>
-            <input type="text" value={text} onChange={(e) => setText(e.target.value)} />
-            <label>Email</label>
+
+            <label >Email</label>
             <input type="text" value={authorEmail} onChange={(e) => setAuthorEmail(e.target.value)} />
+
+            <label htmlFor="text" style={{ display: 'block', marginBottom: '1.5rem' }}>
+                Text
+            </label>
+            <textarea
+                id="text"
+                rows="6"
+                cols="50"
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+                style={{ display: 'block', marginBottom: '1rem' }}
+            />
+
             <button type="button" onClick={cancel}>Cancel</button>
             <button type="submit">Update</button>
         </form>
