@@ -8,7 +8,6 @@ import { BACKEND_URL } from '../../constants';
 const TEXT_READ_ENDPOINT = `${BACKEND_URL}/text`;
 const TEXT_CREATE_ENDPOINT = `${BACKEND_URL}/text/create`;
 
-
 function AddTextForm({ visible, cancel, fetchTexts, setError }) {
     const [title, setTitle] = useState('');
     const [text, setText] = useState('');
@@ -35,10 +34,10 @@ function AddTextForm({ visible, cancel, fetchTexts, setError }) {
         <form onSubmit={addText}>
             <label htmlFor="title">Title</label>
             <input required type="text" id="title" value={title} onChange={changeTitle} />
-            <label htmlFor="text">Text</label>
-            <input required type="text" id="text" value={text} onChange={changeText} />
             <label htmlFor="email">Email</label>
             <input required type="text" id="authorEmail" value={authorEmail} onChange={changeEmail} />
+            <label htmlFor="text">Text</label>
+            <textarea required id="text" value={text} onChange={changeText} rows="6" cols="50" />
             <button type="button" onClick={cancel}>Cancel</button>
             <button type="submit">Submit</button>
         </form>
@@ -59,8 +58,8 @@ ErrorMessage.propTypes = {
     message: propTypes.string.isRequired,
 };
 
-function textObjectToArray(Data) {
-    return Object.values(Data);
+function textObjectToArray(data) {
+    return Object.values(data);
 }
 
 function Text({ textItem }) {
@@ -93,7 +92,10 @@ function Texts() {
 
     const fetchTexts = () => {
         axios.get(TEXT_READ_ENDPOINT)
-            .then(({ data }) => setText(textObjectToArray(data)))
+            .then(({ data }) => {
+                const filteredTexts = textObjectToArray(data).filter((item) => item.title !== 'ABOUT');
+                setText(filteredTexts);
+            })
             .catch((error) => setError(`There was a problem retrieving the list of text. ${error}`));
     };
 
