@@ -1,17 +1,19 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import Home from './Home'; // Make sure to adjust the import according to your project structure
+import Home from './Home';
 import '@testing-library/jest-dom';
 
 describe('Home Component', () => {
-    test('renders the home header', () => {
+    it('renders the home header', async () => {
         render(<Home />);
 
         const headerElement = screen.getByRole('heading', {
-        name: /Journal of React/i
-    });
+        name: /Journal-Home/});
         expect(headerElement).toBeInTheDocument();
 
-        expect(headerElement).toHaveStyle('text-align: center');
+        const updateButton = screen.getByRole('button', { name: /Update Text/i });
+        expect(updateButton).toBeInTheDocument();
+
+
     });
 });

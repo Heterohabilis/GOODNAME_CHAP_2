@@ -15,13 +15,13 @@ ErrorMessage.propTypes = {
 };
 
 function UpdateTextForm({ visible, textData, cancel, fetchText, setError }) {
-    const [title, setTitle] = useState(textData.title || 'HOME');
-    const [text, setText] = useState(textData.text || '');
-    const [authorEmail, setAuthorEmail] = useState(textData.authorEmail || '');
+    const [title, setTitle] = useState(textData.title);
+    const [text, setText] = useState(textData.text);
+
 
     const updateText = async (event) => {
         event.preventDefault();
-        const updatedText = { title, text, authorEmail };
+        const updatedText = { title, text };
         try {
             await axios.put(
                 `${TEXT_UPDATE_ENDPOINT}/${title}`,
@@ -41,30 +41,28 @@ function UpdateTextForm({ visible, textData, cancel, fetchText, setError }) {
         <form onSubmit={updateText}>
             <h3>Update Home Text</h3>
 
-            <label htmlFor="title">Title</label>
-            <input 
-                id="title" 
-                type="text" 
-                value={title} 
-                onChange={(e) => setTitle(e.target.value)} 
+            <label>Title</label>
+            <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} />
+
+            <label htmlFor="text" style={{ display: 'block', marginBottom: '1.5rem' }}>
+                Text
+            </label>
+            <textarea
+                id="text"
+                rows="6"
+                cols="50"
+                value={text}
+                onChange={(e) => setText(e.target.value)}
                 readOnly 
             />
 
-            <label htmlFor="email">Email</label>
-            <input 
-                id="email" 
-                type="text" 
-                value={authorEmail} 
-                onChange={(e) => setAuthorEmail(e.target.value)} 
-            />
-
-            <label htmlFor="text">Text</label>
-            <input 
-                id="text" 
-                type="text" 
-                value={text} 
-                onChange={(e) => setText(e.target.value)} 
-            />
+            {/*<label htmlFor="email">Email</label>*/}
+            {/*<input */}
+            {/*    id="email" */}
+            {/*    type="text" */}
+            {/*    value={authorEmail} */}
+            {/*    onChange={(e) => setAuthorEmail(e.target.value)} */}
+            {/*/>*/}
 
             <button type="button" onClick={cancel}>Cancel</button>
             <button type="submit">Update</button>
@@ -131,7 +129,7 @@ function Home() {
     return (
         <div>
             <h1 style={styles}>{homeText.text}</h1>
-            
+            <p>{homeText.text}</p>
             <button 
                 type="button" 
                 onClick={() => setUpdatingText(true)}
@@ -148,6 +146,7 @@ function Home() {
                     setError={setError}
                 />
             )}
+            {error && <ErrorMessage message={error} />}
         </div>
     );
 }
