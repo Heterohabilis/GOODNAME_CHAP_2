@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 
 const homeTitle = 'Home'
 const peopleTitle = 'View All People'
-const manuscriptTitle = 'View All Manuscripts'
+const manuscriptTitle = 'Dashboard'
 const textTitle = 'Text'
 const aboutTitle = 'About'
 const mastheadTitle = 'Masthead'
