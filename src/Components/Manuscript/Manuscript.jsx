@@ -86,12 +86,35 @@ const stateAbbreviations = {
     'PUB': 'PUBLISHED',
 };
 
+const ACTION_ABBREVIATIONS = {
+    ACCEPT: 'ACC',
+    ASSIGN_REF: 'ARF',
+    DELETE_REF: 'DRF',
+    DONE: 'DON',
+    REJECT: 'REJ',
+    WITHDRAW: 'WIT',
+    REMOVE_REF: 'RRF',
+    SUBMIT_REVIEW: 'SBR',
+    ACCEPT_WITH_REVISIONS: 'AWR'
+};
+
+
+// const FULL_ACTION_NAMES = {
+//     ACC: 'Accept',
+//     ARF: 'Assign Reference',
+//     DRF: 'Delete Reference',
+//     DON: 'Done',
+//     REJ: 'Reject',
+//     WIT: 'Withdraw',
+//     RRF: 'Remove Reference',
+//     SBR: 'Submit for Review',
+//     AWR: 'Accept with Revisions'
+// };
+
 function Manuscripts() {
     const [error, setError] = useState('');
     const [manuscripts, setManuscripts] = useState([]);
     const [addingManuscript, setAddingManuscript] = useState(false);
-    const [updatingManuscript, setUpdatingManuscript] = useState(null);
-    const [selectedActions, setSelectedActions] = useState({});
 
     const fetchManuscripts = () => {
         axios.get(MANUSCRIPT_READ_ENDPOINT)
@@ -100,33 +123,6 @@ function Manuscripts() {
     };
 
     useEffect(fetchManuscripts, []);
-
-    const handleUpdateClick = (manuscript) => {
-        setUpdatingManuscript(manuscript);
-        setSelectedActions({}); // Reset selection
-    };
-
-    const handleActionChange = (manuscriptId, event) => {
-        setSelectedActions({
-            ...selectedActions,
-            [manuscriptId]: event.target.value,
-        });
-    };
-
-    const submitStateUpdate = (manuscriptId) => {
-        const action = selectedActions[manuscriptId];
-        if (!action) return;
-        const updatedState = stateAbbreviations[action];
-        axios.put(`${MANUSCRIPT_UPDATE_STATE_ENDPOINT}/${manuscriptId}/update_state`, {
-            action: updatedState,
-        })
-            .then(() => {
-                setUpdatingManuscript(null);
-                fetchManuscripts();
-            })
-            .catch((error) => setError(`Could not update manuscript state: ${error.response?.data?.message || error.message}`));
-    };
-
 
     return (
         <div className="wrapper">
@@ -143,36 +139,80 @@ function Manuscripts() {
                 />
             )}
             {error && <div className="error-message">{error}</div>}
-            {manuscripts.map((manuscript, index) => (
-                <div key={index} className="manuscript-container">
-                    <h2>{manuscript.title}</h2>
-                    <p>Author: {manuscript.author}</p>
-                    <p>Email: {manuscript.author_email}</p>
-                    <p>Abstract: {manuscript.abstract}</p>
-                    <p>Editor: {manuscript.editor}</p>
-
-                    <p><strong>Current State:</strong> {stateAbbreviations[manuscript.state]}</p>
-                    {updatingManuscript?._id === manuscript._id ? (
-                        <div>
-                            <select value={selectedActions[manuscript._id] || ''}
-                                    onChange={(e) => handleActionChange(manuscript._id, e)}>
-                                <option value="" disabled>Select next action</option>
-                                {STATE_TABLE[stateAbbreviations[manuscript.state]]?.map((action) => (
-                                    <option key={action} value={action}>{action}</option>
-                                ))}
-                            </select>
-                            <button type="button" onClick={() => submitStateUpdate(manuscript._id)}>Confirm</button>
-                            <button type="button" onClick={() => setUpdatingManuscript(null)}>Cancel</button>
-                        </div>
-                    ) : (
-                        <button type="button" onClick={() => handleUpdateClick(manuscript)}>Update State</button>
-                    )}
-                </div>
+            {manuscripts.map((manuscript) => (
+                <Manuscript
+                    key={manuscript._id}
+                    manuscript={manuscript}
+                    fetchManuscripts={fetchManuscripts}
+                />
             ))}
-
         </div>
     );
 }
+
+function Manuscript({ manuscript, fetchManuscripts }) {
+    const { title, _id, author, author_email, abstract, editor, state } = manuscript;
+    const [isUpdating, setIsUpdating] = useState(false);
+    const [selectedAction, setSelectedAction] = useState('');
+
+    const handleActionChange = (event) => {
+        setSelectedAction(event.target.value);
+    };
+
+    const submitStateUpdate = () => {
+        if (!selectedAction) return;
+        // const updatedState = stateAbbreviations[selectedAction];
+        const actionAbbreviation = ACTION_ABBREVIATIONS[selectedAction];
+        console.log('Action Abbreviation:', actionAbbreviation);
+
+        axios.put(`${MANUSCRIPT_UPDATE_STATE_ENDPOINT}/${_id}/update_state`, { action: actionAbbreviation })
+            .then(() => {
+                fetchManuscripts();
+                setIsUpdating(false);
+            })
+            .catch((error) => console.log(`Could not update manuscript state: ${error.response?.data?.message || error.message}`));
+    };
+
+    return (
+        <div className="manuscript-container">
+            <h2>{title}</h2>
+            <p>Author: {author}</p>
+            <p>Email: {author_email}</p>
+            <p>Abstract: {abstract}</p>
+            <p>Editor: {editor}</p>
+            <p><strong>Current State:</strong> {stateAbbreviations[state]}</p>
+
+            {isUpdating ? (
+                <div>
+                    <select value={selectedAction} onChange={handleActionChange}>
+                        <option value="" disabled>Select next action</option>
+                        {STATE_TABLE[stateAbbreviations[state]]?.map((action) => (
+                            <option key={action} value={action}>{action}</option>
+                            ))}
+                    </select>
+                    <button type="button" onClick={submitStateUpdate}>Confirm</button>
+                    <button type="button" onClick={() => setIsUpdating(false)}>Cancel</button>
+                </div>
+            ) : (
+                <button type="button" onClick={() => setIsUpdating(true)}>Update State</button>
+            )}
+        </div>
+    );
+}
+
+Manuscript.propTypes = {
+    manuscript: propTypes.shape({
+        _id: propTypes.string.isRequired,
+        title: propTypes.string.isRequired,
+        author: propTypes.string.isRequired,
+        author_email: propTypes.string.isRequired,
+        abstract: propTypes.string.isRequired,
+        editor: propTypes.string,
+        state: propTypes.string.isRequired,
+    }).isRequired,
+    fetchManuscripts: propTypes.func.isRequired,
+};
+
 
 export default Manuscripts;
 
