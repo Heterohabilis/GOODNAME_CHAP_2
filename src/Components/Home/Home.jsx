@@ -110,9 +110,6 @@ function Home() {
         fetchText();
     }, []);
 
-    const styles = {
-        'text-align': 'center',
-    };
 
     if (error) {
         return (
@@ -127,8 +124,8 @@ function Home() {
     }
     
     return (
-        <div>
-            <h1 style={styles}>{homeText.text}</h1>
+        <div className="wrapper">
+            <h1>{homeText.title}</h1>
             <p>{homeText.text}</p>
             <button 
                 type="button" 

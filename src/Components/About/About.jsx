@@ -157,8 +157,8 @@ function About() {
     if (!aboutText) return <p>Loading...</p>;
 
     return (
-        <div className="text-container">
-            <h2>{aboutText.title}</h2>
+        <div className="wrapper">
+            <h1>{aboutText.title}</h1>
             <p>{aboutText.text}</p>
             <button type="button" onClick={() => setUpdatingText(true)}>Update Text</button>
             {updatingText && (
