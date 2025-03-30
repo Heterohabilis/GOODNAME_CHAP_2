@@ -16,12 +16,10 @@ const aboutResponse = {
 
 describe('About Component', () => {
     it('renders about details correctly after API call', async () => {
-        // Mock the Axios GET request
         axios.get.mockResolvedValue({ data: aboutResponse });
 
         render(<About />);
 
-        // Ensure API call resolves and updates the component
         await waitFor(() => {
             const heading = screen.getByRole('heading');
             expect(heading).toHaveTextContent(aboutResponse.ABOUT.title);
@@ -32,7 +30,6 @@ describe('About Component', () => {
             expect(aboutText).toBeInTheDocument();
         });
 
-        // Check if the "Update Text" button is present
         const updateTextButton = screen.getByRole('button', { name: aboutResponse.ABOUT.button });
         expect(updateTextButton).toBeInTheDocument();
     });

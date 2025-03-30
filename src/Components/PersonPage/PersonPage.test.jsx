@@ -19,17 +19,19 @@ describe('PersonPage Component', () => {
     axios.get.mockResolvedValue({ data: mockPersonData });
 
     render(
-      <MemoryRouter initialEntries={['/people/john@example.com']}>
-        <Routes>
-          <Route path="/people/:email" element={<PersonPage />} />
-        </Routes>
-      </MemoryRouter>
+        <MemoryRouter initialEntries={['/people/john@example.com']}>
+          <Routes>
+            <Route path="/people/:email" element={<PersonPage />} />
+          </Routes>
+        </MemoryRouter>
     );
 
     await waitFor(() => {
       expect(screen.getByRole('heading', { name: /john doe/i })).toBeInTheDocument();
-      expect(screen.getByText(/Role:/)).toHaveTextContent('Author, Editor');
-      expect(screen.getByText(/Affiliation:/)).toHaveTextContent('University X');
+
+      expect(screen.getByText(/Role:/).parentElement).toHaveTextContent('Role: Author, Editor');
+
+      expect(screen.getByText(/Affiliation:/).parentElement).toHaveTextContent('Affiliation: University X');
     });
   });
 });
