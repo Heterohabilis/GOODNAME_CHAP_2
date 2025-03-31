@@ -97,19 +97,6 @@ const ACTION_ABBREVIATIONS = {
     ACCEPT_WITH_REVISIONS: 'AWR'
 };
 
-
-// const FULL_ACTION_NAMES = {
-//     ACC: 'Accept',
-//     ARF: 'Assign Reference',
-//     DRF: 'Delete Reference',
-//     DON: 'Done',
-//     REJ: 'Reject',
-//     WIT: 'Withdraw',
-//     RRF: 'Remove Reference',
-//     SBR: 'Submit for Review',
-//     AWR: 'Accept with Revisions'
-// };
-
 function Manuscripts() {
     const [error, setError] = useState('');
     const [manuscripts, setManuscripts] = useState([]);
@@ -153,6 +140,7 @@ function Manuscript({ manuscript, fetchManuscripts }) {
     const { _id, title, author, author_email, abstract, editor, state } = manuscript;
     const [isUpdating, setIsUpdating] = useState(false);
     const [selectedAction, setSelectedAction] = useState('');
+    const [refereeName, setRefereeName] = useState('');
 
     const handleActionChange = (event) => {
         setSelectedAction(event.target.value);
@@ -160,38 +148,30 @@ function Manuscript({ manuscript, fetchManuscripts }) {
 
     const submitStateUpdate = () => {
         if (!selectedAction) return;
-        
-        // Debug logging to see what values we're working with
-        console.log('Manuscript object:', manuscript);
-        console.log('Manuscript ID (_id):', _id);
-        console.log('Selected action:', selectedAction);
-        
+
         if (!_id) {
-            console.error('Error: Manuscript ID is undefined or missing');
             alert('Error: Manuscript ID is missing or undefined');
             return;
         }
-        
-        const actionAbbreviation = ACTION_ABBREVIATIONS[selectedAction];
-        console.log('Action Abbreviation:', actionAbbreviation);
-        
-        // Construct and log the full URL for better debugging
-        const updateUrl = `${MANUSCRIPT_READ_ENDPOINT}/${_id}/update_state`;
-        console.log('Making request to URL:', updateUrl);
-        console.log('Request payload:', { action: actionAbbreviation });
 
-        axios.put(updateUrl, { action: actionAbbreviation })
-            .then((response) => {
-                console.log('Update successful, response:', response.data);
+        const actionAbbreviation = ACTION_ABBREVIATIONS[selectedAction];
+        const updateUrl = `${MANUSCRIPT_READ_ENDPOINT}/${_id}/update_state`;
+        const payload = { action: actionAbbreviation };
+
+        if (selectedAction === 'ASSIGN_REF' || selectedAction === 'DELETE_REF') {
+            payload.referee = refereeName;
+        }
+
+        console.log(payload);
+
+        axios.put(updateUrl, payload)
+            .then(() => {
                 fetchManuscripts();
                 setIsUpdating(false);
+                setSelectedAction('');
+                setRefereeName('');
             })
             .catch((error) => {
-                console.error('Update failed, error details:', error);
-                console.error('Response status:', error.response?.status);
-                console.error('Response data:', error.response?.data);
-                console.log(`Could not update manuscript state: ${error.response?.data?.message || error.message}`);
-                // Show error to user
                 alert(`Failed to update state: ${error.response?.data?.message || error.message}`);
             });
     };
@@ -211,8 +191,14 @@ function Manuscript({ manuscript, fetchManuscripts }) {
                         <option value="" disabled>Select next action</option>
                         {STATE_TABLE[stateAbbreviations[state]]?.map((action) => (
                             <option key={action} value={action}>{action}</option>
-                            ))}
+                        ))}
                     </select>
+                    {(selectedAction === 'ASSIGN_REF' || selectedAction === 'DELETE_REF') && (
+                        <div>
+                            <label>Referee Name</label>
+                            <input type="text" value={refereeName} onChange={(e) => setRefereeName(e.target.value)} />
+                        </div>
+                    )}
                     <button type="button" onClick={submitStateUpdate}>Confirm</button>
                     <button type="button" onClick={() => setIsUpdating(false)}>Cancel</button>
                 </div>
@@ -236,10 +222,9 @@ Manuscript.propTypes = {
     fetchManuscripts: propTypes.func.isRequired,
 };
 
-
 export default Manuscripts;
 
 export {
     manuscriptHeader,
     manuscriptButton,
-}
+};
