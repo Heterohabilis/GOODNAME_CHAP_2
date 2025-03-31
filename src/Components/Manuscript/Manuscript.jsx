@@ -7,7 +7,6 @@ import { BACKEND_URL } from '../../constants';
 
 const MANUSCRIPT_READ_ENDPOINT = `${BACKEND_URL}/manuscript`;
 const MANUSCRIPT_CREATE_ENDPOINT = `${BACKEND_URL}/manuscript/create`;
-const MANUSCRIPT_UPDATE_STATE_ENDPOINT = `${BACKEND_URL}/manuscript/update_state`;
 
 function AddManuscriptForm({ visible, cancel, fetchManuscripts, setError }) {
     const [title, setTitle] = useState('');
@@ -151,7 +150,7 @@ function Manuscripts() {
 }
 
 function Manuscript({ manuscript, fetchManuscripts }) {
-    const { title, _id, author, author_email, abstract, editor, state } = manuscript;
+    const { _id, title, author, author_email, abstract, editor, state } = manuscript;
     const [isUpdating, setIsUpdating] = useState(false);
     const [selectedAction, setSelectedAction] = useState('');
 
@@ -161,16 +160,40 @@ function Manuscript({ manuscript, fetchManuscripts }) {
 
     const submitStateUpdate = () => {
         if (!selectedAction) return;
-        // const updatedState = stateAbbreviations[selectedAction];
+        
+        // Debug logging to see what values we're working with
+        console.log('Manuscript object:', manuscript);
+        console.log('Manuscript ID (_id):', _id);
+        console.log('Selected action:', selectedAction);
+        
+        if (!_id) {
+            console.error('Error: Manuscript ID is undefined or missing');
+            alert('Error: Manuscript ID is missing or undefined');
+            return;
+        }
+        
         const actionAbbreviation = ACTION_ABBREVIATIONS[selectedAction];
         console.log('Action Abbreviation:', actionAbbreviation);
+        
+        // Construct and log the full URL for better debugging
+        const updateUrl = `${MANUSCRIPT_READ_ENDPOINT}/${_id}/update_state`;
+        console.log('Making request to URL:', updateUrl);
+        console.log('Request payload:', { action: actionAbbreviation });
 
-        axios.put(`${MANUSCRIPT_UPDATE_STATE_ENDPOINT}/${_id}/update_state`, { action: actionAbbreviation })
-            .then(() => {
+        axios.put(updateUrl, { action: actionAbbreviation })
+            .then((response) => {
+                console.log('Update successful, response:', response.data);
                 fetchManuscripts();
                 setIsUpdating(false);
             })
-            .catch((error) => console.log(`Could not update manuscript state: ${error.response?.data?.message || error.message}`));
+            .catch((error) => {
+                console.error('Update failed, error details:', error);
+                console.error('Response status:', error.response?.status);
+                console.error('Response data:', error.response?.data);
+                console.log(`Could not update manuscript state: ${error.response?.data?.message || error.message}`);
+                // Show error to user
+                alert(`Failed to update state: ${error.response?.data?.message || error.message}`);
+            });
     };
 
     return (
