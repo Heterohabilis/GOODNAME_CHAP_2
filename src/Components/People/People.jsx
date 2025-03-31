@@ -161,7 +161,7 @@ function Person({ person, fetchPeople, setUpdatingPerson }) {
 
   return (
       <div>
-        <Link to={email}>
+        <Link to={email} style={{ textDecoration: 'none', color: 'black'  }}>
           <div className="person-container">
             <h2>{name}</h2>
             <p>Email: {email}</p>
