@@ -17,6 +17,7 @@ ErrorMessage.propTypes = {
 function UpdateTextForm({ visible, textData, cancel, fetchText, setError }) {
     const [title, setTitle] = useState(textData.title);
     const [text, setText] = useState(textData.text);
+    const [authorEmail, setAuthorEmail] = useState(textData.authorEmail);
 
 
     const updateText = async (event) => {
@@ -44,6 +45,14 @@ function UpdateTextForm({ visible, textData, cancel, fetchText, setError }) {
             <label>Title</label>
             <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} />
 
+            <label htmlFor="email">Email</label>
+            <input
+                id="email"
+                type="text"
+                value={authorEmail}
+                onChange={(e) => setAuthorEmail(e.target.value)}
+            />
+
             <label htmlFor="text" style={{ display: 'block', marginBottom: '1.5rem' }}>
                 Text
             </label>
@@ -53,16 +62,7 @@ function UpdateTextForm({ visible, textData, cancel, fetchText, setError }) {
                 cols="50"
                 value={text}
                 onChange={(e) => setText(e.target.value)}
-                readOnly 
             />
-
-            {/*<label htmlFor="email">Email</label>*/}
-            {/*<input */}
-            {/*    id="email" */}
-            {/*    type="text" */}
-            {/*    value={authorEmail} */}
-            {/*    onChange={(e) => setAuthorEmail(e.target.value)} */}
-            {/*/>*/}
 
             <button type="button" onClick={cancel}>Cancel</button>
             <button type="submit">Update</button>
