@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 const homeTitle = 'Home'
 const peopleTitle = 'View All People'
 const manuscriptTitle = 'Dashboard'
-const textTitle = 'Text'
+// const textTitle = 'Text'
 const aboutTitle = 'About'
 const mastheadTitle = 'Masthead'
 
@@ -15,7 +15,7 @@ const PAGES = [
   { label: peopleTitle, destination: '/people' },
   { label: mastheadTitle, destination: '/masthead' },
   { label: manuscriptTitle, destination: '/manuscripts' },
-  { label: textTitle, destination: '/texts'},
+  // { label: textTitle, destination: '/texts'},
   { label: aboutTitle, destination: '/about'},
   // { label: 'Submit Manuscript', destination: '/manuscripts/create' },
 ];
@@ -51,7 +51,7 @@ export {
   homeTitle,
   peopleTitle,
   manuscriptTitle,
-  textTitle,
+  // textTitle,
   aboutTitle,
   mastheadTitle,
 }

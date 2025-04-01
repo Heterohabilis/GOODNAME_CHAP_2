@@ -11,7 +11,7 @@ import './App.css';
 import Navbar from './Components/Navbar';
 import People from './Components/People';
 import Manuscripts from './Components/Manuscript';
-import Texts from './Components/Texts'
+// import Texts from './Components/Texts'
 import About from './Components/About'
 import PersonPage from './Components/PersonPage';
 import Masthead from "./Components/Masthead";
@@ -36,7 +36,7 @@ function App() {
         <Route path="people/:email" element={<PersonPage />} />
         <Route path="masthead" element={<Masthead />} />
         <Route path="manuscripts" element={<Manuscripts />} />
-        <Route path="texts" element={<Texts />} />
+        {/*<Route path="texts" element={<Texts />} />*/}
         <Route path="about" element={<About />} />
       </Routes>
     </BrowserRouter>
