@@ -38,6 +38,7 @@ function PersonPage() {
   return (
     <div style={{ textAlign: "center" }}>
       <h1>{person.name}</h1>
+      <p><strong>Email:</strong> {person.email || 'Unknown'}</p>
       <p><strong>Role:</strong> {toBePrinted?.join(', ') || 'Unknown'}</p>
       <p><strong>Affiliation:</strong> {person.affiliation || 'Unknown'}</p>
     </div>
