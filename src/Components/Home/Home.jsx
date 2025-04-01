@@ -15,17 +15,16 @@ ErrorMessage.propTypes = {
 };
 
 function UpdateTextForm({ visible, textData, cancel, fetchText, setError }) {
-    const [title, setTitle] = useState(textData.title);
     const [text, setText] = useState(textData.text);
     const [authorEmail, setAuthorEmail] = useState(textData.authorEmail);
 
 
     const updateText = async (event) => {
         event.preventDefault();
-        const updatedText = { title, text };
+        const updatedText = { text, authorEmail };
         try {
             await axios.put(
-                `${TEXT_UPDATE_ENDPOINT}/${title}`,
+                `${TEXT_UPDATE_ENDPOINT}/${textData.title}`,
                 updatedText,
                 { headers: { 'Content-Type': 'application/json' } }
             );
@@ -41,9 +40,6 @@ function UpdateTextForm({ visible, textData, cancel, fetchText, setError }) {
     return (
         <form onSubmit={updateText}>
             <h3>Update Home Text</h3>
-
-            <label>Title</label>
-            <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} />
 
             <label htmlFor="email">Email</label>
             <input
