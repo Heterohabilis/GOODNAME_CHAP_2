@@ -8,27 +8,29 @@ import AddIcon from './add.svg';
 import TrashIcon from './trash.svg';
 import PencilIcon from './pencil.svg';
 
-
 const PEOPLE_READ_ENDPOINT = `${BACKEND_URL}/people`;
 const PEOPLE_CREATE_ENDPOINT = `${BACKEND_URL}/people/create`;
 const PEOPLE_UPDATE_ENDPOINT = `${BACKEND_URL}/people`;
+const ROLES_ENDPOINT = `${BACKEND_URL}/roles`;
 
 function AddPersonForm({ visible, cancel, fetchPeople, setError }) {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [affiliation, setAffiliation] = useState('');
     const [roles, setRoles] = useState('');
-    const availableRoles = {
-        'AU': 'Author',
-        'ED': 'Editor',
-        'ME': 'Managing Editor',
-        'CE': 'Copy Editor',
-        'RE': 'Referee',
-    };
+    const [availableRoles, setAvailableRoles] = useState({});
+
+    useEffect(() => {
+        axios.get(ROLES_ENDPOINT)
+            .then(({ data }) => setAvailableRoles(data))
+            .catch((error) => setError(`Failed to load roles: ${error}`));
+    }, [setError]);
+
     const changeName = (event) => setName(event.target.value);
     const changeEmail = (event) => setEmail(event.target.value);
     const changeAffiliation = (event) => setAffiliation(event.target.value);
     const changeRoles = (event) => setRoles(event.target.value);
+
     const addPerson = async (event) => {
         event.preventDefault();
         const newPerson = { name, email, affiliation, roles };
@@ -73,27 +75,24 @@ AddPersonForm.propTypes = {
     setError: propTypes.func.isRequired,
 };
 
-
 function ErrorMessage({ message }) {
-  return <div className="error-message">{message}</div>;
+    return <div className="error-message">{message}</div>;
 }
 ErrorMessage.propTypes = {
-  message: propTypes.string.isRequired,
+    message: propTypes.string.isRequired,
 };
-
 
 function UpdatePersonForm({ visible, person, cancel, fetchPeople, setError }) {
     const [name, setName] = useState(person.name);
     const [affiliation, setAffiliation] = useState(person.affiliation || '');
     const [roles, setRoles] = useState(person.roles || []);
+    const [availableRoles, setAvailableRoles] = useState({});
 
-    const availableRoles = {
-        'AU': 'Author',
-        'ED': 'Editor',
-        'ME': 'Managing Editor',
-        'CE': 'Copy Editor',
-        'RE': 'Referee',
-    };
+    useEffect(() => {
+        axios.get(ROLES_ENDPOINT)
+            .then(({ data }) => setAvailableRoles(data))
+            .catch((error) => setError(`Failed to load roles: ${error}`));
+    }, [setError]);
 
     const updatePerson = (event) => {
         event.preventDefault();
@@ -134,108 +133,105 @@ function UpdatePersonForm({ visible, person, cancel, fetchPeople, setError }) {
     );
 }
 
-// prototypes
 UpdatePersonForm.propTypes = {
-  visible: propTypes.bool.isRequired,
-  person: propTypes.shape({
-    name: propTypes.string.isRequired,
-    email: propTypes.string.isRequired,
-    affiliation: propTypes.string,
-    roles: propTypes.arrayOf(propTypes.string),
-  }).isRequired,
-  cancel: propTypes.func.isRequired,
-  fetchPeople: propTypes.func.isRequired,
-  setError: propTypes.func.isRequired,
+    visible: propTypes.bool.isRequired,
+    person: propTypes.shape({
+        name: propTypes.string.isRequired,
+        email: propTypes.string.isRequired,
+        affiliation: propTypes.string,
+        roles: propTypes.arrayOf(propTypes.string),
+    }).isRequired,
+    cancel: propTypes.func.isRequired,
+    fetchPeople: propTypes.func.isRequired,
+    setError: propTypes.func.isRequired,
 };
 
-
-
 function Person({ person, fetchPeople, setUpdatingPerson }) {
-  const { name, email } = person;
+    const { name, email } = person;
 
-  const deletePerson = () => {
-    axios.delete(`${PEOPLE_READ_ENDPOINT}/${email}`)
-        .then(fetchPeople)
-        .catch((error) => console.log(`There was a problem deleting the person. ${error}`));
-  };
+    const deletePerson = () => {
+        axios.delete(`${PEOPLE_READ_ENDPOINT}/${email}`)
+            .then(fetchPeople)
+            .catch((error) => console.log(`There was a problem deleting the person. ${error}`));
+    };
 
-  return (
-      <div>
-        <Link to={email} style={{ textDecoration: 'none', color: 'black'  }}>
-          <div className="person-container">
-            <h2>{name}</h2>
-            <p>Email: {email}</p>
-          </div>
-        </Link>
-        <button onClick={deletePerson} style={{ marginRight: '10px' }}>
-            <img src={TrashIcon} alt="Delete" style={{ width: '24px', height: '24px' }} />
-        </button>
-        <button onClick={() => setUpdatingPerson(person)}>
-            <img src={PencilIcon} alt="Edit" style={{ width: '24px', height: '24px' }} />
-        </button>
-      </div>
-  );
+    return (
+        <div>
+            <Link to={email} style={{ textDecoration: 'none', color: 'black'  }}>
+                <div className="person-container">
+                    <h2>{name}</h2>
+                    <p>Email: {email}</p>
+                </div>
+            </Link>
+            <button onClick={deletePerson} style={{ marginRight: '10px' }}>
+                <img src={TrashIcon} alt="Delete" style={{ width: '24px', height: '24px' }} />
+            </button>
+            <button onClick={() => setUpdatingPerson(person)}>
+                <img src={PencilIcon} alt="Edit" style={{ width: '24px', height: '24px' }} />
+            </button>
+        </div>
+    );
 }
 Person.propTypes = {
-  person: propTypes.shape({
-    name: propTypes.string.isRequired,
-    email: propTypes.string.isRequired,
-  }).isRequired,
-  fetchPeople: propTypes.func.isRequired,
-  setUpdatingPerson: propTypes.func.isRequired,
+    person: propTypes.shape({
+        name: propTypes.string.isRequired,
+        email: propTypes.string.isRequired,
+    }).isRequired,
+    fetchPeople: propTypes.func.isRequired,
+    setUpdatingPerson: propTypes.func.isRequired,
 };
 
 function peopleObjectToArray(Data) {
-  return Object.values(Data);
+    return Object.values(Data);
 }
 
 function People() {
-  const [error, setError] = useState('');
-  const [people, setPeople] = useState([]);
-  const [addingPerson, setAddingPerson] = useState(false);
-  const [updatingPerson, setUpdatingPerson] = useState(null);
+    const [error, setError] = useState('');
+    const [people, setPeople] = useState([]);
+    const [addingPerson, setAddingPerson] = useState(false);
+    const [updatingPerson, setUpdatingPerson] = useState(null);
 
-  const fetchPeople = () => {
-    axios.get(PEOPLE_READ_ENDPOINT)
-        .then(({ data }) => setPeople(peopleObjectToArray(data)))
-        .catch((error) => setError(`There was a problem retrieving the list of people. ${error}`));
-  };
+    const fetchPeople = () => {
+        axios.get(PEOPLE_READ_ENDPOINT)
+            .then(({ data }) => setPeople(peopleObjectToArray(data)))
+            .catch((error) => setError(`There was a problem retrieving the list of people. ${error}`));
+    };
 
-  useEffect(fetchPeople, []);
+    useEffect(fetchPeople, []);
 
-  return (
-      <div className="wrapper">
-        <header>
-          <h1>View All People</h1>
-            <button type="button" onClick={() => setAddingPerson(true)} style={{ border: 'none', background: 'transparent', padding: 0 }}>
-                <img src={AddIcon} alt="Add a Person" style={{ width: '32px', height: '32px' }} />
-            </button>
-        </header>
-        {addingPerson && (
-            <AddPersonForm
-                visible={addingPerson}
-                cancel={() => setAddingPerson(false)}
-                fetchPeople={fetchPeople}
-                setError={setError}
-            />
-        )}
-        {error && <ErrorMessage message={error} />}
-        {people.map((person) => (
-        <div key={person.email}>
-          <Person person={person} fetchPeople={fetchPeople} setUpdatingPerson={setUpdatingPerson} />
-          {updatingPerson?.email === person.email && (
-            <UpdatePersonForm
-              visible={true}
-              person={updatingPerson}
-              cancel={() => setUpdatingPerson(null)}
-              fetchPeople={fetchPeople}
-              setError={setError}
-            />
-          )}
+    return (
+        <div className="wrapper">
+            <header>
+                <h1>View All People</h1>
+                <button type="button" onClick={() => setAddingPerson(true)} style={{ border: 'none', background: 'transparent', padding: 0 }}>
+                    <img src={AddIcon} alt="Add a Person" style={{ width: '32px', height: '32px' }} />
+                </button>
+            </header>
+            {addingPerson && (
+                <AddPersonForm
+                    visible={addingPerson}
+                    cancel={() => setAddingPerson(false)}
+                    fetchPeople={fetchPeople}
+                    setError={setError}
+                />
+            )}
+            {error && <ErrorMessage message={error} />}
+            {people.map((person) => (
+                <div key={person.email}>
+                    <Person person={person} fetchPeople={fetchPeople} setUpdatingPerson={setUpdatingPerson} />
+                    {updatingPerson?.email === person.email && (
+                        <UpdatePersonForm
+                            visible={true}
+                            person={updatingPerson}
+                            cancel={() => setUpdatingPerson(null)}
+                            fetchPeople={fetchPeople}
+                            setError={setError}
+                        />
+                    )}
+                </div>
+            ))}
         </div>
-      ))}
-      </div>
-  );
+    );
 }
 
 export default People;
