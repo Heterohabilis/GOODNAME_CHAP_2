@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import propTypes from 'prop-types';
 import axios from 'axios';
-// import { Link } from 'react-router-dom';
 
 import { BACKEND_URL } from '../../constants';
 
 const MANUSCRIPT_READ_ENDPOINT = `${BACKEND_URL}/manuscript`;
 const MANUSCRIPT_CREATE_ENDPOINT = `${BACKEND_URL}/manuscript/create`;
+const ACTIONS_ENDPOINT = `${BACKEND_URL}/actions`;
 
 function AddManuscriptForm({ visible, cancel, fetchManuscripts, setError }) {
     const [title, setTitle] = useState('');
@@ -56,21 +56,8 @@ AddManuscriptForm.propTypes = {
     setError: propTypes.func.isRequired,
 };
 
-const manuscriptHeader = 'Dashboard'
-const manuscriptButton = 'Add a Manuscript'
-
-const STATE_TABLE = {
-    SUBMITTED: ["ASSIGN_REF", "REJECT", "WITHDRAW"],
-    IN_REF_REV: ["ACCEPT", "REJECT", "ACCEPT_WITH_REVISIONS", "SUBMIT_REVIEW", "ASSIGN_REF", "DELETE_REF", "WITHDRAW"],
-    AUTHOR_REVISION: ["DONE"],
-    COPY_EDIT: ["DONE", "WITHDRAW"],
-    AUTHOR_REV: ["DONE", "WITHDRAW"],
-    EDITOR_REV: ["ACCEPT"],
-    FORMATTING: ["DONE"],
-    PUBLISHED: [],
-    REJECTED: ["WITHDRAW"],
-    WITHDRAWN: ["WITHDRAW"]
-};
+const manuscriptHeader = 'Dashboard';
+const manuscriptButton = 'Add a Manuscript';
 
 const stateAbbreviations = {
     'AUR': 'AUTHOR_REV',
@@ -101,6 +88,7 @@ function Manuscripts() {
     const [error, setError] = useState('');
     const [manuscripts, setManuscripts] = useState([]);
     const [addingManuscript, setAddingManuscript] = useState(false);
+    const [actionTable, setActionTable] = useState({});
 
     const fetchManuscripts = () => {
         axios.get(MANUSCRIPT_READ_ENDPOINT)
@@ -109,6 +97,12 @@ function Manuscripts() {
     };
 
     useEffect(fetchManuscripts, []);
+
+    useEffect(() => {
+        axios.get(ACTIONS_ENDPOINT)
+            .then(({ data }) => setActionTable(data))
+            .catch((error) => setError(`Failed to fetch action table: ${error}`));
+    }, []);
 
     return (
         <div className="wrapper">
@@ -130,13 +124,14 @@ function Manuscripts() {
                     key={manuscript._id}
                     manuscript={manuscript}
                     fetchManuscripts={fetchManuscripts}
+                    actionTable={actionTable}
                 />
             ))}
         </div>
     );
 }
 
-function Manuscript({ manuscript, fetchManuscripts }) {
+function Manuscript({ manuscript, fetchManuscripts, actionTable }) {
     const { _id, title, author, author_email, abstract, editor, state } = manuscript;
     const [isUpdating, setIsUpdating] = useState(false);
     const [selectedAction, setSelectedAction] = useState('');
@@ -161,8 +156,6 @@ function Manuscript({ manuscript, fetchManuscripts }) {
         if (selectedAction === 'ASSIGN_REF' || selectedAction === 'DELETE_REF') {
             payload.referee = refereeName;
         }
-
-        console.log(payload);
 
         axios.put(updateUrl, payload)
             .then(() => {
@@ -189,7 +182,7 @@ function Manuscript({ manuscript, fetchManuscripts }) {
                 <div>
                     <select value={selectedAction} onChange={handleActionChange}>
                         <option value="" disabled>Select next action</option>
-                        {STATE_TABLE[stateAbbreviations[state]]?.map((action) => (
+                        {actionTable[stateAbbreviations[state]]?.map((action) => (
                             <option key={action} value={action}>{action}</option>
                         ))}
                     </select>
@@ -220,6 +213,7 @@ Manuscript.propTypes = {
         state: propTypes.string.isRequired,
     }).isRequired,
     fetchManuscripts: propTypes.func.isRequired,
+    actionTable: propTypes.object.isRequired,
 };
 
 export default Manuscripts;
