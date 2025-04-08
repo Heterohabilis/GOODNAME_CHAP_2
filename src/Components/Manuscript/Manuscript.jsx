@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import propTypes from 'prop-types';
 import axios from 'axios';
+import './Manuscript.css';
 
 import { BACKEND_URL } from '../../constants';
 
@@ -81,6 +82,17 @@ const ACTION_ABBREVIATIONS = {
     ACCEPT_WITH_REVISIONS: 'AWR'
 };
 
+const groupManuscriptsByState = (manuscripts) => {
+    return manuscripts.reduce((groups, manuscript) => {
+        const state = stateAbbreviations[manuscript.state];
+        if (!groups[state]) {
+            groups[state] = [];
+        }
+        groups[state].push(manuscript);
+        return groups;
+    }, {});
+};
+
 function Manuscripts() {
     const [error, setError] = useState('');
     const [manuscripts, setManuscripts] = useState([]);
@@ -101,6 +113,10 @@ function Manuscripts() {
             .catch((error) => setError(`Failed to fetch action table: ${error}`));
     }, []);
 
+    const groupedManuscripts = groupManuscriptsByState(
+        manuscripts.filter(manuscript => manuscript.state !== 'WIT')
+    );
+
     return (
         <div className="wrapper">
             <header>
@@ -116,16 +132,23 @@ function Manuscripts() {
                 />
             )}
             {error && <div className="error-message">{error}</div>}
-            {manuscripts
-                .filter(manuscript => manuscript.state !== 'WIT')
-                .map((manuscript) => (
-                    <Manuscript
-                        key={manuscript._id}
-                        manuscript={manuscript}
-                        fetchManuscripts={fetchManuscripts}
-                        actionTable={actionTable}
-                    />
+            <div className="manuscripts-columns">
+                {Object.entries(groupedManuscripts).map(([state, manuscriptsInState]) => (
+                    <div key={state} className="manuscript-column">
+                        <h2 className="state-header">{state}</h2>
+                        <div className="manuscripts-list">
+                            {manuscriptsInState.map((manuscript) => (
+                                <Manuscript
+                                    key={manuscript._id}
+                                    manuscript={manuscript}
+                                    fetchManuscripts={fetchManuscripts}
+                                    actionTable={actionTable}
+                                />
+                            ))}
+                        </div>
+                    </div>
                 ))}
+            </div>
         </div>
     );
 }
@@ -169,16 +192,18 @@ function Manuscript({ manuscript, fetchManuscripts, actionTable }) {
     };
 
     return (
-        <div className="manuscript-container">
-            <h2>{title}</h2>
-            <p>Author: {author}</p>
-            <p>Email: {author_email}</p>
-            <p>Abstract: {abstract}</p>
-            <p>Editor: {editor}</p>
-            <p><strong>Current State:</strong> {stateAbbreviations[state]}</p>
+        <div className="manuscript-card">
+            <h3>{title}</h3>
+            <p><strong>Author:</strong> {author}</p>
+            <p><strong>Email:</strong> {author_email}</p>
+            <details>
+                <summary>Abstract</summary>
+                <p>{abstract}</p>
+            </details>
+            {editor && <p><strong>Editor:</strong> {editor}</p>}
 
             {isUpdating ? (
-                <div>
+                <div className="update-controls">
                     <select value={selectedAction} onChange={handleActionChange}>
                         <option value="" disabled>Select next action</option>
                         {actionTable[stateAbbreviations[state]]?.map((action) => (
@@ -191,8 +216,10 @@ function Manuscript({ manuscript, fetchManuscripts, actionTable }) {
                             <input type="text" value={refereeName} onChange={(e) => setRefereeName(e.target.value)} />
                         </div>
                     )}
-                    <button type="button" onClick={submitStateUpdate}>Confirm</button>
-                    <button type="button" onClick={() => setIsUpdating(false)}>Cancel</button>
+                    <div className="button-group">
+                        <button type="button" onClick={submitStateUpdate}>Confirm</button>
+                        <button type="button" onClick={() => setIsUpdating(false)}>Cancel</button>
+                    </div>
                 </div>
             ) : (
                 <button type="button" onClick={() => setIsUpdating(true)}>Update State</button>

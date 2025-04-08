@@ -1,0 +1,59 @@
+.manuscripts-columns {
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+    overflow-x: auto;
+}
+
+.manuscript-column {
+    min-width: 300px;
+    flex: 1;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    padding: 16px;
+}
+
+.state-header {
+    text-align: center;
+    padding: 10px;
+    margin: 0 0 16px 0;
+    background-color: #e0e0e0;
+    border-radius: 4px;
+}
+
+.manuscripts-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.manuscript-card {
+    background-color: white;
+    border-radius: 6px;
+    padding: 16px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.manuscript-card h3 {
+    margin-top: 0;
+    margin-bottom: 12px;
+}
+
+.manuscript-card p {
+    margin: 8px 0;
+}
+
+.update-controls {
+    margin-top: 16px;
+}
+
+.button-group {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+details summary {
+    cursor: pointer;
+    margin-bottom: 8px;
+} 
