@@ -119,14 +119,16 @@ function Manuscripts() {
                 />
             )}
             {error && <div className="error-message">{error}</div>}
-            {manuscripts.map((manuscript) => (
-                <Manuscript
-                    key={manuscript._id}
-                    manuscript={manuscript}
-                    fetchManuscripts={fetchManuscripts}
-                    actionTable={actionTable}
-                />
-            ))}
+            {manuscripts
+                .filter(manuscript => manuscript.state !== 'WIT')
+                .map((manuscript) => (
+                    <Manuscript
+                        key={manuscript._id}
+                        manuscript={manuscript}
+                        fetchManuscripts={fetchManuscripts}
+                        actionTable={actionTable}
+                    />
+                ))}
         </div>
     );
 }
