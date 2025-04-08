@@ -14,11 +14,10 @@ function AddManuscriptForm({ visible, cancel, fetchManuscripts, setError }) {
     const [authorEmail, setAuthorEmail] = useState('');
     const [text, setText] = useState('');
     const [abstract, setAbstract] = useState('');
-    const [editor, setEditor] = useState('');
 
     const addManuscript = async (event) => {
         event.preventDefault();
-        const newManuscript = { title, author, author_email: authorEmail, text, abstract, editor };
+        const newManuscript = { title, author, author_email: authorEmail, text, abstract };
         try {
             await axios.put(MANUSCRIPT_CREATE_ENDPOINT, newManuscript);
             fetchManuscripts();
@@ -41,8 +40,6 @@ function AddManuscriptForm({ visible, cancel, fetchManuscripts, setError }) {
             <textarea required rows="20" cols="80" value={text} onChange={(e) => setText(e.target.value)}></textarea>
             <label>Abstract</label>
             <textarea required rows="10" cols="80" value={abstract} onChange={(e) => setAbstract(e.target.value)}></textarea>
-            <label>Editor</label>
-            <input required type="text" value={editor} onChange={(e) => setEditor(e.target.value)} />
             <button type="button" onClick={cancel}>Cancel</button>
             <button type="submit">Submit</button>
         </form>
