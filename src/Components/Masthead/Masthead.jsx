@@ -36,7 +36,9 @@ function Masthead() {
             </header>
             {error && <div className="error-message">{error}</div>}
             <ul>
-                {masthead.map(([role, people], index) => (
+                {masthead
+                    .filter(([role]) => role !== 'Author' && role !== 'Referee')
+                    .map(([role, people], index) => (
                     people.length > 0 && (
                         <li key={index}>
                             <strong>{role}:</strong>
