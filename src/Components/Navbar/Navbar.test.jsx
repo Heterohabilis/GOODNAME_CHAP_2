@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import Navbar from '../Navbar';
 import { BrowserRouter } from 'react-router-dom';
-import { homeTitle, peopleTitle, manuscriptTitle, textTitle, aboutTitle} from './Navbar';
+import {homeTitle, peopleTitle, manuscriptTitle, textTitle, aboutTitle, loginTitle} from './Navbar';
 
 describe('Navbar Component', () => {
   it('renders navbar links correctly', () => {
@@ -20,10 +20,10 @@ describe('Navbar Component', () => {
     const manuscriptsLink = screen.getByRole('link', { name: manuscriptTitle });
     expect(manuscriptsLink).toHaveAttribute('href', '/manuscripts');
 
-    const textsLink = screen.getByRole('link', { name: textTitle });
-    expect(textsLink).toHaveAttribute('href', '/texts');
-
     const aboutLink = screen.getByRole('link', { name: aboutTitle });
     expect(aboutLink).toHaveAttribute('href', '/about');
+
+    const loginLink = screen.getByRole('link', { name: loginTitle });
+    expect(loginLink).toHaveAttribute('href', '/login');
   });
 });

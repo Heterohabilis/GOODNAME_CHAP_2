@@ -9,6 +9,7 @@ const manuscriptTitle = 'Dashboard'
 // const textTitle = 'Text'
 const aboutTitle = 'About'
 const mastheadTitle = 'Masthead'
+const loginTitle = 'Login'
 
 const PAGES = [
   { label: homeTitle, destination: '/' },
@@ -18,6 +19,7 @@ const PAGES = [
   // { label: textTitle, destination: '/texts'},
   { label: aboutTitle, destination: '/about'},
   // { label: 'Submit Manuscript', destination: '/manuscripts/create' },
+  { label: loginTitle, destination: '/login' },
 ];
 
 function NavLink({ page }) {
@@ -54,4 +56,5 @@ export {
   // textTitle,
   aboutTitle,
   mastheadTitle,
+  loginTitle,
 }

@@ -16,7 +16,7 @@ import About from './Components/About'
 import PersonPage from './Components/PersonPage';
 import Masthead from "./Components/Masthead";
 import Home from "./Components/Home";
-
+import Login from "./Components/Login";
 
 // function PersonPage() {
 //   const { name } = useParams();
@@ -38,6 +38,7 @@ function App() {
         <Route path="manuscripts" element={<Manuscripts />} />
         {/*<Route path="texts" element={<Texts />} />*/}
         <Route path="about" element={<About />} />
+        <Route path="login" element={<Login />} />
       </Routes>
     </BrowserRouter>
   );
