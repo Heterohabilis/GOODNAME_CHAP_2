@@ -97,7 +97,7 @@ function UpdatePersonForm({ visible, person, cancel, fetchPeople, setError }) {
     const updatePerson = (event) => {
         event.preventDefault();
         const updatedPerson = { name, affiliation, roles };
-        axios.put(`${PEOPLE_UPDATE_ENDPOINT}/${person.email}`, updatedPerson)
+        axios.put(`${PEOPLE_UPDATE_ENDPOINT}/${person.email}/${localStorage.getItem('userEmail')}`, updatedPerson)
             .then(() => {
                 fetchPeople();
                 cancel();
@@ -150,7 +150,7 @@ function Person({ person, fetchPeople, setUpdatingPerson }) {
     const { name, email } = person;
 
     const deletePerson = () => {
-        axios.delete(`${PEOPLE_READ_ENDPOINT}/${email}`)
+        axios.delete(`${PEOPLE_READ_ENDPOINT}/${email}/${localStorage.getItem('userEmail')}`)
             .then(fetchPeople)
             .catch((error) => console.log(`There was a problem deleting the person. ${error}`));
     };

@@ -18,7 +18,7 @@ function PersonPage() {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    axios.get(`${PEOPLE_READ_ENDPOINT}/${email}`)
+    axios.get(`${PEOPLE_READ_ENDPOINT}/${email}/${localStorage.getItem('userEmail')}`)
       .then(({ data }) => setPerson(data))
       .catch((err) => setError(`Error fetching person details: ${err.message}`));
   }, [email]);

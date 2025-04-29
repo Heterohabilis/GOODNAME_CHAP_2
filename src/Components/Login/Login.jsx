@@ -130,10 +130,14 @@ function Login() {
         event.preventDefault();
         try {
             await axios.put(LOGIN_ENDPOINT, { username: email, password: password });
+            localStorage.setItem('isLoggedIn', 'true');
+            localStorage.setItem('userEmail', email);
             alert('Logged in successfully!');
         } catch (error) {
             console.error('Login error:', error);
             setError(`Login failed: ${error.message}`);
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('userEmail');
         }
     };
 
