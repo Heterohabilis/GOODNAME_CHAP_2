@@ -58,16 +58,16 @@ const manuscriptHeader = 'Dashboard';
 const manuscriptButton = 'Add a Manuscript';
 
 const stateAbbreviations = {
-    'AUR': 'AUTHOR_REV',
-    'CED': 'COPY_EDIT',
-    'REV': 'IN_REF_REV',
-    'REJ': 'REJECTED',
     'SUB': 'SUBMITTED',
-    'WIT': 'WITHDRAWN',
-    'EDR': 'EDITOR_REV',
+    'REV': 'IN_REF_REV',
     'ARV': 'AUTHOR_REVISION',
+    'EDR': 'EDITOR_REV',
+    'CED': 'COPY_EDIT',
+    'AUR': 'AUTHOR_REV',
     'FMT': 'FORMATTING',
     'PUB': 'PUBLISHED',
+    'REJ': 'REJECTED',
+    'WIT': 'WITHDRAWN',
 };
 
 const ACTION_ABBREVIATIONS = {
@@ -133,21 +133,24 @@ function Manuscripts() {
             )}
             {error && <div className="error-message">{error}</div>}
             <div className="manuscripts-columns">
-                {Object.entries(groupedManuscripts).map(([state, manuscriptsInState]) => (
-                    <div key={state} className="manuscript-column">
-                        <h2 className="state-header">{state}</h2>
-                        <div className="manuscripts-list">
-                            {manuscriptsInState.map((manuscript) => (
-                                <Manuscript
-                                    key={manuscript._id}
-                                    manuscript={manuscript}
-                                    fetchManuscripts={fetchManuscripts}
-                                    actionTable={actionTable}
-                                />
-                            ))}
+                {['SUBMITTED', 'IN_REF_REV', 'AUTHOR_REVISION', 'EDITOR_REV', 'COPY_EDIT', 'AUTHOR_REV', 'FORMATTING', 'PUBLISHED'].map((state) => {
+                    const manuscriptsInState = groupedManuscripts[state] || [];
+                    return (
+                        <div key={state} className="manuscript-column">
+                            <h2 className="state-header">{state}</h2>
+                            <div className="manuscripts-list">
+                                {manuscriptsInState.map((manuscript) => (
+                                    <Manuscript
+                                        key={manuscript._id}
+                                        manuscript={manuscript}
+                                        fetchManuscripts={fetchManuscripts}
+                                        actionTable={actionTable}
+                                    />
+                                ))}
+                            </div>
                         </div>
-                    </div>
-                ))}
+                    );
+                })}
             </div>
         </div>
     );
