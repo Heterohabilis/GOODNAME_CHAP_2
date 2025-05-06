@@ -175,7 +175,7 @@ function Manuscript({ manuscript, fetchManuscripts, actionTable }) {
         }
 
         const actionAbbreviation = ACTION_ABBREVIATIONS[selectedAction];
-        const updateUrl = `${MANUSCRIPT_READ_ENDPOINT}/${_id}/update_state`;
+        const updateUrl = `${MANUSCRIPT_READ_ENDPOINT}/${_id}/update_state/${localStorage.getItem('userEmail')}`;
         const payload = { action: actionAbbreviation };
 
         if (selectedAction === 'ASSIGN_REF' || selectedAction === 'DELETE_REF') {
