@@ -157,10 +157,11 @@ function Manuscripts() {
 }
 
 function Manuscript({ manuscript, fetchManuscripts, actionTable }) {
-    const { _id, title, author, author_email, abstract, editor, state } = manuscript;
+    const { _id, title, author, author_email, abstract, text, editor, state } = manuscript; 
     const [isUpdating, setIsUpdating] = useState(false);
     const [selectedAction, setSelectedAction] = useState('');
     const [refereeName, setRefereeName] = useState('');
+    const [showFullText, setShowFullText] = useState(false); 
 
     const handleActionChange = (event) => {
         setSelectedAction(event.target.value);
@@ -203,8 +204,17 @@ function Manuscript({ manuscript, fetchManuscripts, actionTable }) {
                 <summary>Abstract</summary>
                 <p>{abstract}</p>
             </details>
+            {text && ( 
+                <button type="button" onClick={() => setShowFullText(!showFullText)} className="show-text-button">
+                    {showFullText ? 'Hide Text' : 'Show Text'}
+                </button>
+            )}
+            {showFullText && text && (
+                <div className="manuscript-full-text">
+                    <p>{text}</p>
+                </div>
+            )}
             {editor && <p><strong>Editor:</strong> {editor}</p>}
-
             {isUpdating ? (
                 <div className="update-controls">
                     <select value={selectedAction} onChange={handleActionChange}>
@@ -237,6 +247,7 @@ Manuscript.propTypes = {
         title: propTypes.string.isRequired,
         author: propTypes.string.isRequired,
         author_email: propTypes.string.isRequired,
+        text: propTypes.string.isRequired,
         abstract: propTypes.string.isRequired,
         editor: propTypes.string,
         state: propTypes.string.isRequired,
