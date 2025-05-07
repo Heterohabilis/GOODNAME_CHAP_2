@@ -16,15 +16,14 @@ ErrorMessage.propTypes = {
 
 function UpdateTextForm({ visible, textData, cancel, fetchText, setError }) {
     const [text, setText] = useState(textData.text);
-    const [authorEmail, setAuthorEmail] = useState(textData.authorEmail);
 
 
     const updateText = async (event) => {
         event.preventDefault();
-        const updatedText = { text, authorEmail };
+        const updatedText = { text };
         try {
             await axios.put(
-                `${TEXT_UPDATE_ENDPOINT}/${textData.title}`,
+                `${TEXT_UPDATE_ENDPOINT}/${textData.title}/${localStorage.getItem('userEmail')}`,
                 updatedText,
                 { headers: { 'Content-Type': 'application/json' } }
             );
@@ -40,15 +39,6 @@ function UpdateTextForm({ visible, textData, cancel, fetchText, setError }) {
     return (
         <form onSubmit={updateText}>
             <h3>Update Home Text</h3>
-
-            <label htmlFor="email">Email</label>
-            <input
-                id="email"
-                type="text"
-                value={authorEmail}
-                onChange={(e) => setAuthorEmail(e.target.value)}
-            />
-
             <label htmlFor="text" style={{ display: 'block', marginBottom: '1.5rem' }}>
                 Text
             </label>

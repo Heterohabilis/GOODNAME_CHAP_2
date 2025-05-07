@@ -10,15 +10,14 @@ const TEXT_UPDATE_ENDPOINT = `${BACKEND_URL}/text`;
 function AddTextForm({ visible, cancel, fetchTexts, setError }) {
     const [title, setTitle] = useState('');
     const [text, setText] = useState('');
-    const [authorEmail, setAuthorEmail] = useState('');
+
 
     const changeTitle = (event) => setTitle(event.target.value);
     const changeText = (event) => setText(event.target.value);
-    const changeEmail = (event) => setAuthorEmail(event.target.value);
 
     const addText = async (event) => {
         event.preventDefault();
-        const newText = { title, text, authorEmail };
+        const newText = { title, text };
         try {
             await axios.put(TEXT_CREATE_ENDPOINT, newText, {
                 headers: { 'Content-Type': 'application/json' }
@@ -35,9 +34,6 @@ function AddTextForm({ visible, cancel, fetchTexts, setError }) {
         <form onSubmit={addText}>
             <label htmlFor="title">Title</label>
             <input required type="text" id="title" value={title} onChange={changeTitle} />
-
-            <label htmlFor="email">Email</label>
-            <input required type="text" id="email" value={authorEmail} onChange={changeEmail} />
 
             <label htmlFor="text">Text</label>
             <textarea required id="text" value={text} onChange={changeText} rows="6" cols="50" />
@@ -65,14 +61,13 @@ ErrorMessage.propTypes = {
 
 function UpdateTextForm({ visible, textData, cancel, fetchTexts, setError }) {
     const [text, setText] = useState(textData.text);
-    const [authorEmail, setAuthorEmail] = useState(textData.authorEmail);
 
     const updateText = async (event) => {
         event.preventDefault();
-        const updatedText = { text, authorEmail };
+        const updatedText = { text };
         try {
             await axios.put(
-                `${TEXT_UPDATE_ENDPOINT}/${textData.title}`,
+                `${TEXT_UPDATE_ENDPOINT}/${textData.title}/${localStorage.getItem('userEmail')}`,
                 updatedText,
                 { headers: { 'Content-Type': 'application/json' } }
             );
@@ -87,9 +82,6 @@ function UpdateTextForm({ visible, textData, cancel, fetchTexts, setError }) {
     return (
         <form onSubmit={updateText}>
             <h3>Update Text</h3>
-
-            <label >Email</label>
-            <input type="text" value={authorEmail} onChange={(e) => setAuthorEmail(e.target.value)} />
 
             <label htmlFor="text" style={{ display: 'block', marginBottom: '1.5rem' }}>
                 Text
