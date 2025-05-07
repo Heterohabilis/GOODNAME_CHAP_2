@@ -175,6 +175,18 @@ function Manuscript({ manuscript, fetchManuscripts, actionTable }) {
     const [showFullText, setShowFullText] = useState(false);
     const [referees, setReferees] = useState([]);
 
+    const actionDisplayNames = {
+        ACCEPT: 'Accept',
+        ASSIGN_REF: 'Assign Referee',
+        DELETE_REF: 'Delete Referee',
+        DONE: 'Done',
+        REJECT: 'Reject',
+        WITHDRAW: 'Withdraw',
+        REMOVE_REF: 'Remove Referee',
+        SUBMIT_REVIEW: 'Submit Review',
+        ACCEPT_WITH_REVISIONS: 'Accept with Revisions',
+    };
+
     useEffect(() => {
         axios.get(`${BACKEND_URL}/people`)
             .then(({ data }) => {
@@ -245,7 +257,9 @@ function Manuscript({ manuscript, fetchManuscripts, actionTable }) {
                     <select value={selectedAction} onChange={handleActionChange}>
                         <option value="" disabled>Select next action</option>
                         {actionTable[stateAbbreviations[state]]?.map((action) => (
-                            <option key={action} value={action}>{action}</option>
+                            <option key={action} value={action}>
+                                {actionDisplayNames[action] || action}
+                            </option>
                         ))}
                     </select>
                     {(selectedAction === 'ASSIGN_REF' || selectedAction === 'DELETE_REF') && (
@@ -276,6 +290,7 @@ function Manuscript({ manuscript, fetchManuscripts, actionTable }) {
         </div>
     );
 }
+
 
 Manuscript.propTypes = {
     manuscript: propTypes.shape({
