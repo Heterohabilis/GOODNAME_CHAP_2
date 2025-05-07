@@ -280,11 +280,13 @@ function Manuscript({ manuscript, fetchManuscripts, actionTable }) {
                                 <option value="" disabled>Select a referee</option>
 
                                 {selectedAction === 'ASSIGN_REF' &&
-                                    referees.map((ref) => (
-                                        <option key={ref.email} value={ref.email}>
-                                            {ref.name} ({ref.email})
-                                        </option>
-                                    ))}
+                                    referees
+                                        .filter(ref => !assignedReferees.includes(ref.email))
+                                        .map((ref) => (
+                                            <option key={ref.email} value={ref.email}>
+                                                {ref.name} ({ref.email})
+                                            </option>
+                                        ))}
 
                                 {selectedAction === 'DELETE_REF' &&
                                     assignedReferees.map((email) => (
@@ -295,6 +297,7 @@ function Manuscript({ manuscript, fetchManuscripts, actionTable }) {
                             </select>
                         </div>
                     )}
+
 
                     <div className="button-group">
                         <button type="button" onClick={submitStateUpdate}>Confirm</button>
