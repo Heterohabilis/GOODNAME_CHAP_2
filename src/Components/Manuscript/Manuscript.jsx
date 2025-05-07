@@ -160,8 +160,22 @@ function Manuscript({ manuscript, fetchManuscripts, actionTable }) {
     const { _id, title, author, author_email, abstract, text, editor, state } = manuscript; 
     const [isUpdating, setIsUpdating] = useState(false);
     const [selectedAction, setSelectedAction] = useState('');
-    const [refereeName, setRefereeName] = useState('');
-    const [showFullText, setShowFullText] = useState(false); 
+    const [selectedReferee, setSelectedReferee] = useState('');
+    const [showFullText, setShowFullText] = useState(false);
+    const [referees, setReferees] = useState([]);
+
+    useEffect(() => {
+        axios.get(`${BACKEND_URL}/people`)
+            .then(({ data }) => {
+                const refereeList = Object.values(data).filter(person => 
+                    person.roles && person.roles.includes('RE')
+                );
+                setReferees(refereeList);
+            })
+            .catch((error) => {
+                console.error('Failed to fetch referees:', error);
+            });
+    }, []);
 
     const handleActionChange = (event) => {
         setSelectedAction(event.target.value);
@@ -180,7 +194,7 @@ function Manuscript({ manuscript, fetchManuscripts, actionTable }) {
         const payload = { action: actionAbbreviation };
 
         if (selectedAction === 'ASSIGN_REF' || selectedAction === 'DELETE_REF') {
-            payload.referee = refereeName;
+            payload.referee = selectedReferee;
         }
 
         axios.put(updateUrl, payload)
@@ -188,7 +202,7 @@ function Manuscript({ manuscript, fetchManuscripts, actionTable }) {
                 fetchManuscripts();
                 setIsUpdating(false);
                 setSelectedAction('');
-                setRefereeName('');
+                setSelectedReferee('');
             })
             .catch((error) => {
                 alert(`Failed to update state: ${error.response?.data?.message || error.message}`);
@@ -225,8 +239,19 @@ function Manuscript({ manuscript, fetchManuscripts, actionTable }) {
                     </select>
                     {(selectedAction === 'ASSIGN_REF' || selectedAction === 'DELETE_REF') && (
                         <div>
-                            <label>Referee Name</label>
-                            <input type="text" value={refereeName} onChange={(e) => setRefereeName(e.target.value)} />
+                            <label>Referee</label>
+                            <select 
+                                value={selectedReferee} 
+                                onChange={(e) => setSelectedReferee(e.target.value)}
+                                required
+                            >
+                                <option value="" disabled>Select a referee</option>
+                                {referees.map((referee) => (
+                                    <option key={referee.email} value={referee.email}>
+                                        {referee.name} ({referee.email})
+                                    </option>
+                                ))}
+                            </select>
                         </div>
                     )}
                     <div className="button-group">
