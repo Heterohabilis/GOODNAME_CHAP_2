@@ -168,7 +168,7 @@ function Manuscripts() {
 }
 
 function Manuscript({ manuscript, fetchManuscripts, actionTable }) {
-    const { _id, title, author, author_email, abstract, text, editor, state } = manuscript;
+    const { _id, title, author, author_email, abstract, text, editor, state, referees: assignedReferees = [] } = manuscript;
     const [isUpdating, setIsUpdating] = useState(false);
     const [selectedAction, setSelectedAction] = useState('');
     const [selectedReferee, setSelectedReferee] = useState('');
@@ -202,6 +202,7 @@ function Manuscript({ manuscript, fetchManuscripts, actionTable }) {
 
     const handleActionChange = (event) => {
         setSelectedAction(event.target.value);
+        setSelectedReferee('');
     };
 
     const submitStateUpdate = () => {
@@ -209,6 +210,11 @@ function Manuscript({ manuscript, fetchManuscripts, actionTable }) {
 
         if (!_id) {
             alert('Error: Manuscript ID is missing or undefined');
+            return;
+        }
+
+        if (selectedAction === 'DELETE_REF' && !assignedReferees.includes(selectedReferee)) {
+            alert(`Cannot delete referee "${selectedReferee}" because they are not assigned to this manuscript.`);
             return;
         }
 
@@ -262,6 +268,7 @@ function Manuscript({ manuscript, fetchManuscripts, actionTable }) {
                             </option>
                         ))}
                     </select>
+
                     {(selectedAction === 'ASSIGN_REF' || selectedAction === 'DELETE_REF') && (
                         <div>
                             <label>Referee</label>
@@ -271,14 +278,24 @@ function Manuscript({ manuscript, fetchManuscripts, actionTable }) {
                                 required
                             >
                                 <option value="" disabled>Select a referee</option>
-                                {referees.map((referee) => (
-                                    <option key={referee.email} value={referee.email}>
-                                        {referee.name} ({referee.email})
-                                    </option>
-                                ))}
+
+                                {selectedAction === 'ASSIGN_REF' &&
+                                    referees.map((ref) => (
+                                        <option key={ref.email} value={ref.email}>
+                                            {ref.name} ({ref.email})
+                                        </option>
+                                    ))}
+
+                                {selectedAction === 'DELETE_REF' &&
+                                    assignedReferees.map((email) => (
+                                        <option key={email} value={email}>
+                                            {email}
+                                        </option>
+                                    ))}
                             </select>
                         </div>
                     )}
+
                     <div className="button-group">
                         <button type="button" onClick={submitStateUpdate}>Confirm</button>
                         <button type="button" onClick={() => setIsUpdating(false)}>Cancel</button>
@@ -292,6 +309,7 @@ function Manuscript({ manuscript, fetchManuscripts, actionTable }) {
 }
 
 
+
 Manuscript.propTypes = {
     manuscript: propTypes.shape({
         _id: propTypes.string.isRequired,
@@ -302,6 +320,7 @@ Manuscript.propTypes = {
         abstract: propTypes.string.isRequired,
         editor: propTypes.string,
         state: propTypes.string.isRequired,
+        referees: propTypes.arrayOf(propTypes.string),
     }).isRequired,
     fetchManuscripts: propTypes.func.isRequired,
     actionTable: propTypes.object.isRequired,
