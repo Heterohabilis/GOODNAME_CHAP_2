@@ -35,7 +35,7 @@ function AddPersonForm({ visible, cancel, fetchPeople, setError }) {
         event.preventDefault();
         const newPerson = { name, email, affiliation, roles };
         try {
-            await axios.put(PEOPLE_CREATE_ENDPOINT, newPerson);
+            await axios.put(`${PEOPLE_CREATE_ENDPOINT}?user_id=${localStorage.getItem('userEmail')}`, newPerson);
             fetchPeople();
             cancel();
         } catch (error) {
