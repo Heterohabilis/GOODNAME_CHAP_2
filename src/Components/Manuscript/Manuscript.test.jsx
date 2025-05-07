@@ -19,15 +19,16 @@ describe('Manuscript Component', () => {
     render(<Manuscript />);
 
     const states = [
-      'SUBMITTED',
-      'IN_REF_REV',
-      'AUTHOR_REVISION',
-      'EDITOR_REV',
-      'COPY_EDIT',
-      'AUTHOR_REV',
-      'FORMATTING',
-      'PUBLISHED'
+      'Submitted',
+      'Referee Review',
+      'Author Revision',
+      'Editor Review',
+      'Copy Edit',
+      'Author Review',
+      'Formatting',
+      'Published'
     ];
+
 
     states.forEach(state => {
       expect(screen.getByRole('heading', { name: state })).toBeInTheDocument();

@@ -99,6 +99,17 @@ function Manuscripts() {
     const [addingManuscript, setAddingManuscript] = useState(false);
     const [actionTable, setActionTable] = useState({});
 
+    const stateDisplayNames = {
+        SUBMITTED: 'Submitted',
+        IN_REF_REV: 'Referee Review',
+        AUTHOR_REVISION: 'Author Revision',
+        EDITOR_REV: 'Editor Review',
+        COPY_EDIT: 'Copy Edit',
+        AUTHOR_REV: 'Author Review',
+        FORMATTING: 'Formatting',
+        PUBLISHED: 'Published',
+    };
+
     const fetchManuscripts = () => {
         axios.get(MANUSCRIPT_READ_ENDPOINT)
             .then(({ data }) => setManuscripts(Object.values(data)))
@@ -133,11 +144,11 @@ function Manuscripts() {
             )}
             {error && <div className="error-message">{error}</div>}
             <div className="manuscripts-columns">
-                {['SUBMITTED', 'IN_REF_REV', 'AUTHOR_REVISION', 'EDITOR_REV', 'COPY_EDIT', 'AUTHOR_REV', 'FORMATTING', 'PUBLISHED'].map((state) => {
+                {Object.keys(stateDisplayNames).map((state) => {
                     const manuscriptsInState = groupedManuscripts[state] || [];
                     return (
                         <div key={state} className="manuscript-column">
-                            <h2 className="state-header">{state}</h2>
+                            <h2 className="state-header">{stateDisplayNames[state]}</h2>
                             <div className="manuscripts-list">
                                 {manuscriptsInState.map((manuscript) => (
                                     <Manuscript
@@ -157,7 +168,7 @@ function Manuscripts() {
 }
 
 function Manuscript({ manuscript, fetchManuscripts, actionTable }) {
-    const { _id, title, author, author_email, abstract, text, editor, state } = manuscript; 
+    const { _id, title, author, author_email, abstract, text, editor, state } = manuscript;
     const [isUpdating, setIsUpdating] = useState(false);
     const [selectedAction, setSelectedAction] = useState('');
     const [selectedReferee, setSelectedReferee] = useState('');
@@ -167,7 +178,7 @@ function Manuscript({ manuscript, fetchManuscripts, actionTable }) {
     useEffect(() => {
         axios.get(`${BACKEND_URL}/people`)
             .then(({ data }) => {
-                const refereeList = Object.values(data).filter(person => 
+                const refereeList = Object.values(data).filter(person =>
                     person.roles && person.roles.includes('RE')
                 );
                 setReferees(refereeList);
@@ -218,7 +229,7 @@ function Manuscript({ manuscript, fetchManuscripts, actionTable }) {
                 <summary>Abstract</summary>
                 <p>{abstract}</p>
             </details>
-            {text && ( 
+            {text && (
                 <button type="button" onClick={() => setShowFullText(!showFullText)} className="show-text-button">
                     {showFullText ? 'Hide Text' : 'Show Text'}
                 </button>
@@ -240,8 +251,8 @@ function Manuscript({ manuscript, fetchManuscripts, actionTable }) {
                     {(selectedAction === 'ASSIGN_REF' || selectedAction === 'DELETE_REF') && (
                         <div>
                             <label>Referee</label>
-                            <select 
-                                value={selectedReferee} 
+                            <select
+                                value={selectedReferee}
                                 onChange={(e) => setSelectedReferee(e.target.value)}
                                 required
                             >
