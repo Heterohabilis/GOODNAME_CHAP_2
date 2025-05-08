@@ -17,6 +17,12 @@ function App() {
     setIsNavOpen(open);
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('userEmail');
+    alert('Logged out successfully!');
+  };
+
   return (
     <BrowserRouter>
       <div className="app-container">
@@ -29,6 +35,7 @@ function App() {
             &#9776;
           </div>
           <h1 className="site-title">GOODNAME JOURNAL</h1>
+          <button className="logout-button" onClick={handleLogout}>Logout</button>
         </header>
 
         <nav 
