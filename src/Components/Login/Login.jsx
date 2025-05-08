@@ -62,6 +62,8 @@ function SignUpPopup({ onClose }) {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
+    const [name, setName] = useState('');
+    const [role, setRole] = useState('author');
 
     SignUpPopup.propTypes = {
         onClose: propTypes.func.isRequired,
@@ -77,7 +79,8 @@ function SignUpPopup({ onClose }) {
             await axios.post(REGISTER_ENDPOINT, {
                 username: email,
                 password: password,
-                level: 0
+                name: name,
+                level: role === 'editor' ? 1 : 0
             });
             alert('Registered successfully!');
             onClose();
@@ -91,6 +94,22 @@ function SignUpPopup({ onClose }) {
             <div className="popup-content">
                 <h3>Sign Up</h3>
                 {error && <div className="error-message">{error}</div>}
+                <label>Name</label>
+                <input
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    required
+                />
+                <label>Role</label>
+                <select
+                    value={role}
+                    onChange={(e) => setRole(e.target.value)}
+                    required
+                >
+                    <option value="author">Author</option>
+                    <option value="editor">Editor</option>
+                </select>
                 <label>Email</label>
                 <input
                     type="email"
