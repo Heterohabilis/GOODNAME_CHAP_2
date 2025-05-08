@@ -238,6 +238,19 @@ function Manuscript({ manuscript, fetchManuscripts, actionTable }) {
             });
     };
 
+    const withdrawManuscript = () => {
+        if (!window.confirm('Are you sure you want to withdraw this manuscript?')) return;
+
+        const updateUrl = `${MANUSCRIPT_READ_ENDPOINT}/${_id}/update_state/${localStorage.getItem('userEmail')}`;
+        axios.put(updateUrl, { action: 'WIT' })
+            .then(() => {
+                fetchManuscripts();
+            })
+            .catch((error) => {
+                alert(`Failed to withdraw: ${error.response?.data?.message || error.message}`);
+            });
+    };
+
     return (
         <div className="manuscript-card">
             <h3>{title}</h3>
@@ -258,6 +271,7 @@ function Manuscript({ manuscript, fetchManuscripts, actionTable }) {
                 </div>
             )}
             {editor && <p><strong>Editor:</strong> {editor}</p>}
+
             {isUpdating ? (
                 <div className="update-controls">
                     <select value={selectedAction} onChange={handleActionChange}>
@@ -298,20 +312,20 @@ function Manuscript({ manuscript, fetchManuscripts, actionTable }) {
                         </div>
                     )}
 
-
                     <div className="button-group">
                         <button type="button" onClick={submitStateUpdate}>Confirm</button>
                         <button type="button" onClick={() => setIsUpdating(false)}>Cancel</button>
                     </div>
                 </div>
             ) : (
-                <button type="button" onClick={() => setIsUpdating(true)}>Update State</button>
+                <div className="button-group">
+                    <button type="button" onClick={() => setIsUpdating(true)}>Update State</button>
+                    <button type="button" onClick={withdrawManuscript}>Withdraw</button>
+                </div>
             )}
         </div>
     );
 }
-
-
 
 Manuscript.propTypes = {
     manuscript: propTypes.shape({
