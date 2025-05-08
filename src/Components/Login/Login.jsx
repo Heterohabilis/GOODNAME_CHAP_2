@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import propTypes from 'prop-types';
 import { BACKEND_URL } from '../../constants';
+import './Login.css';
 
 const LOGIN_ENDPOINT = `${BACKEND_URL}/login`;
 const REGISTER_ENDPOINT = `${BACKEND_URL}/register`;
@@ -64,6 +65,7 @@ function SignUpPopup({ onClose }) {
     const [error, setError] = useState('');
     const [name, setName] = useState('');
     const [role, setRole] = useState('author');
+    const [affiliation, setAffiliation] = useState('');
 
     SignUpPopup.propTypes = {
         onClose: propTypes.func.isRequired,
@@ -80,6 +82,7 @@ function SignUpPopup({ onClose }) {
                 username: email,
                 password: password,
                 name: name,
+                affiliation: affiliation,
                 level: role === 'editor' ? 1 : 0
             });
             alert('Registered successfully!');
@@ -92,47 +95,56 @@ function SignUpPopup({ onClose }) {
     return (
         <div className="popup">
             <div className="popup-content">
-                <h3>Sign Up</h3>
                 {error && <div className="error-message">{error}</div>}
-                <label>Name</label>
-                <input
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    required
-                />
-                <label>Role</label>
-                <select
-                    value={role}
-                    onChange={(e) => setRole(e.target.value)}
-                    required
-                >
-                    <option value="author">Author</option>
-                    <option value="editor">Editor</option>
-                </select>
-                <label>Email</label>
-                <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                />
-                <label>Password</label>
-                <input
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                />
-                <label>Confirm Password</label>
-                <input
-                    type="password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    required
-                />
-                <button onClick={handleRegister}>Register</button>
-                <button onClick={onClose}>Cancel</button>
+                <form className="signup-form">
+                    <div className="signup-title">Sign Up</div>
+                    <label>Name</label>
+                    <input
+                        type="text"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        required
+                    />
+                    <label>Affiliation</label>
+                    <input
+                        type="text"
+                        value={affiliation}
+                        onChange={(e) => setAffiliation(e.target.value)}
+                        required
+                    />
+                    <label>Role</label>
+                    <select
+                        value={role}
+                        onChange={(e) => setRole(e.target.value)}
+                        required
+                    >
+                        <option value="author">Author</option>
+                        <option value="editor">Editor</option>
+                    </select>
+                    <label>Email</label>
+                    <input
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                    />
+                    <label>Password</label>
+                    <input
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                    />
+                    <label>Confirm Password</label>
+                    <input
+                        type="password"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        required
+                    />
+                    <button type="button" onClick={handleRegister}>Register</button>
+                    <button type="button" onClick={onClose}>Cancel</button>
+                </form>
             </div>
         </div>
     );
@@ -175,7 +187,11 @@ function Login() {
                 login={login}
             />
             {error && <ErrorMessage message={error} />}
-            {showRegisterPopup && <SignUpPopup onClose={() => setShowRegisterPopup(false)} />}
+            {showRegisterPopup && (
+                <div className="popup-overlay">
+                    <SignUpPopup onClose={() => setShowRegisterPopup(false)} />
+                </div>
+            )}
         </div>
     );
 }
