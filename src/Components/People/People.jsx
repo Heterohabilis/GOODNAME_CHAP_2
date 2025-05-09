@@ -97,6 +97,8 @@ function UpdatePersonForm({ visible, person, cancel, fetchPeople, setError }) {
     const [roles, setRoles] = useState(person.roles || []);
     const [availableRoles, setAvailableRoles] = useState({});
 
+    const isSelf = localStorage.getItem('userEmail') === person.email;
+
     useEffect(() => {
         axios.get(ROLES_ENDPOINT)
             .then(({ data }) => setAvailableRoles(data))
@@ -105,13 +107,21 @@ function UpdatePersonForm({ visible, person, cancel, fetchPeople, setError }) {
 
     const updatePerson = (event) => {
         event.preventDefault();
+
+        if (roles.length === 0 || roles.every(r => r === '')) {
+            setError('A person must have at least one role.');
+            return;
+        }
+
         const updatedPerson = { name, affiliation, roles };
         axios.put(`${PEOPLE_UPDATE_ENDPOINT}/${person.email}/${localStorage.getItem('userEmail')}`, updatedPerson)
             .then(() => {
                 fetchPeople();
                 cancel();
             })
-            .catch((error) => setError(`Could not update person: ${error.response?.data?.message || error.message}`));
+            .catch((error) =>
+                setError(`Could not update person: ${error.response?.data?.message || error.message}`)
+            );
     };
 
     if (!visible) return null;
@@ -128,6 +138,7 @@ function UpdatePersonForm({ visible, person, cancel, fetchPeople, setError }) {
                 <div key={index} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                     <select
                         value={role}
+                        disabled={isSelf}
                         onChange={(e) =>
                             setRoles(roles.map((r, i) => (i === index ? e.target.value : r)))
                         }
@@ -138,7 +149,6 @@ function UpdatePersonForm({ visible, person, cancel, fetchPeople, setError }) {
                             const isAUSelected = otherRoles.includes('AU');
                             const isNotAU = code !== 'AU';
                             const isDisabled = (isAUSelected && isNotAU) || (code === 'AU' && otherRoles.length > 0 && otherRoles.some(r => r !== 'AU'));
-
                             return (
                                 <option key={code} value={code} disabled={isDisabled}>
                                     {name}
@@ -146,15 +156,36 @@ function UpdatePersonForm({ visible, person, cancel, fetchPeople, setError }) {
                             );
                         })}
                     </select>
-                    <button type="button" onClick={() => setRoles(roles.filter((_, i) => i !== index))}>Remove</button>
+                    <button
+                        type="button"
+                        onClick={() => setRoles(roles.filter((_, i) => i !== index))}
+                        disabled={isSelf}
+                    >
+                        Remove
+                    </button>
                 </div>
             ))}
-            <button type="button" onClick={() => setRoles([...roles, ''])}>Add Role</button>
+
+            <button
+                type="button"
+                onClick={() => setRoles([...roles, ''])}
+                disabled={isSelf}
+            >
+                Add Role
+            </button>
+
+            {isSelf && (
+                <p style={{ fontStyle: 'italic', color: 'gray' }}>
+                    You cannot modify your own roles.
+                </p>
+            )}
+
             <button type="button" onClick={cancel}>Cancel</button>
             <button type="submit">Update</button>
         </form>
     );
 }
+
 
 UpdatePersonForm.propTypes = {
     visible: propTypes.bool.isRequired,
