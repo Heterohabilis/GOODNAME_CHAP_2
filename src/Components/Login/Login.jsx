@@ -164,8 +164,8 @@ function Login({ onLogin }) {
             localStorage.setItem('isLoggedIn', 'true');
             localStorage.setItem('userEmail', email);
             alert('Logged in successfully!');
-            onLogin();                       // ✅ 通知 App 更新状态
-            window.location.href = '/';     // ✅ 跳转首页并刷新
+            onLogin();
+            window.location.href = '/';
         } catch (error) {
             console.error('Login error:', error);
             setError(`Login failed: ${error.message}`);

@@ -111,10 +111,23 @@ function Manuscripts() {
     };
 
     const fetchManuscripts = () => {
-        axios.get(MANUSCRIPT_READ_ENDPOINT)
-            .then(({ data }) => setManuscripts(Object.values(data)))
-            .catch((error) => setError(`There was a problem retrieving the manuscripts. ${error}`));
+        const userEmail = localStorage.getItem('userEmail');
+        const isAdmin = localStorage.getItem('isAdmin') === 'true';
+
+        const url = isAdmin
+            ? `${BACKEND_URL}/manuscript`
+            : `${BACKEND_URL}/manuscript/by_email/${userEmail}`;
+
+        axios.get(url)
+            .then(({ data }) => {
+                const result = Array.isArray(data) ? data : Object.values(data); // 兼容不同格式
+                setManuscripts(result);
+            })
+            .catch((error) => {
+                setError(`There was a problem retrieving the manuscripts. ${error}`);
+            });
     };
+
 
     useEffect(fetchManuscripts, []);
 

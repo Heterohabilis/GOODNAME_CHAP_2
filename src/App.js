@@ -32,7 +32,6 @@ function App() {
     alert('Logged out successfully!');
   };
 
-  // ⛓️ 检查当前用户是否是 admin
   useEffect(() => {
     if (isLoggedIn) {
       const email = localStorage.getItem('userEmail');
@@ -40,6 +39,7 @@ function App() {
           .get(`${ADMIN_CHECK_ENDPOINT}/${email}`)
           .then((res) => {
             setIsAdmin(res.data.is_admin);
+            localStorage.setItem('isAdmin', res.data.is_admin ? 'true' : 'false');
           })
           .catch((err) => {
             console.error('Failed to check admin status:', err);
