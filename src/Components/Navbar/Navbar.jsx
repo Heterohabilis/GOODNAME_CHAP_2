@@ -36,9 +36,9 @@ NavLink.propTypes = {
 };
 
 function Navbar({ isLoggedIn }) {
-  const filteredPages = isLoggedIn
-      ? ALL_PAGES
-      : ALL_PAGES.filter((p) => [homeTitle, loginTitle].includes(p.label));
+  const filteredPages = ALL_PAGES.filter((p) =>
+      isLoggedIn ? p.label !== loginTitle : [homeTitle, loginTitle].includes(p.label)
+  );
 
   return (
       <nav>
@@ -50,6 +50,7 @@ function Navbar({ isLoggedIn }) {
       </nav>
   );
 }
+
 
 Navbar.propTypes = {
   isLoggedIn: propTypes.bool.isRequired,
