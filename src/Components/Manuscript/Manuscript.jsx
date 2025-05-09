@@ -15,10 +15,13 @@ function AddManuscriptForm({ visible, cancel, fetchManuscripts, setError }) {
     const [authorEmail, setAuthorEmail] = useState('');
     const [text, setText] = useState('');
     const [abstract, setAbstract] = useState('');
+    const isAdmin = localStorage.getItem('isAdmin') === 'true';
 
     const addManuscript = async (event) => {
         event.preventDefault();
-        const newManuscript = { title, author, author_email: authorEmail, text, abstract };
+        const actualEmail = isAdmin ? authorEmail : localStorage.getItem('userEmail');
+        const newManuscript = { title, author, author_email: actualEmail, text, abstract };
+
         try {
             await axios.put(MANUSCRIPT_CREATE_ENDPOINT, newManuscript);
             fetchManuscripts();
@@ -29,18 +32,33 @@ function AddManuscriptForm({ visible, cancel, fetchManuscripts, setError }) {
     };
 
     if (!visible) return null;
+
     return (
         <form onSubmit={addManuscript}>
             <label>Title</label>
             <input required type="text" value={title} onChange={(e) => setTitle(e.target.value)} />
+
             <label>Author</label>
             <input required type="text" value={author} onChange={(e) => setAuthor(e.target.value)} />
-            <label>Author Email</label>
-            <input required type="email" value={authorEmail} onChange={(e) => setAuthorEmail(e.target.value)} />
+
+            {isAdmin && (
+                <>
+                    <label>Author Email</label>
+                    <input
+                        required
+                        type="email"
+                        value={authorEmail}
+                        onChange={(e) => setAuthorEmail(e.target.value)}
+                    />
+                </>
+            )}
+
             <label>Text</label>
-            <textarea required rows="20" cols="80" value={text} onChange={(e) => setText(e.target.value)}></textarea>
+            <textarea required rows="20" cols="80" value={text} onChange={(e) => setText(e.target.value)} />
+
             <label>Abstract</label>
-            <textarea required rows="10" cols="80" value={abstract} onChange={(e) => setAbstract(e.target.value)}></textarea>
+            <textarea required rows="10" cols="80" value={abstract} onChange={(e) => setAbstract(e.target.value)} />
+
             <button type="button" onClick={cancel}>Cancel</button>
             <button type="submit">Submit</button>
         </form>

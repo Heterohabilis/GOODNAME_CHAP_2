@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './App.css';
 import { BACKEND_URL } from './constants';
@@ -19,6 +19,7 @@ function App() {
   const [isNavOpen, setIsNavOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('isLoggedIn'));
   const [isAdmin, setIsAdmin] = useState(false);
+  const navigate = useNavigate(); // ✅ 获取跳转器
 
   const handleNavToggle = (open) => {
     setIsNavOpen(open);
@@ -27,9 +28,11 @@ function App() {
   const handleLogout = () => {
     localStorage.removeItem('isLoggedIn');
     localStorage.removeItem('userEmail');
+    localStorage.removeItem('isAdmin');
     setIsLoggedIn(false);
     setIsAdmin(false);
     alert('Logged out successfully!');
+    navigate('/');
   };
 
   useEffect(() => {
@@ -51,60 +54,64 @@ function App() {
   }, [isLoggedIn]);
 
   return (
-      <BrowserRouter>
-        <div className="app-container">
-          <header className="top-bar">
-            <div
-                className="nav-toggle-icon"
-                onMouseEnter={() => handleNavToggle(true)}
-                onClick={() => handleNavToggle(!isNavOpen)}
-            >
-              &#9776;
-            </div>
-
-            <div className="header-center">
-              <h1 className="site-title">GOODNAME JOURNAL</h1>
-            </div>
-
-            <div className="header-right">
-              <p className="login-banner">
-                {isLoggedIn
-                    ? `Welcome back, ${isAdmin ? 'admin' : 'user'}: ${localStorage.getItem('userEmail')}!`
-                    : 'Please log in!'}
-              </p>
-              {isLoggedIn && (
-                  <button className="logout-button" onClick={handleLogout}>
-                    Logout
-                  </button>
-              )}
-            </div>
-          </header>
-
+      <div className="app-container">
+        <header className="top-bar">
           <div
-              className={`side-navbar ${isNavOpen ? 'open' : ''}`}
-              onMouseLeave={() => handleNavToggle(false)}
+              className="nav-toggle-icon"
+              onMouseEnter={() => handleNavToggle(true)}
+              onClick={() => handleNavToggle(!isNavOpen)}
           >
-            <Navbar isLoggedIn={isLoggedIn} isAdmin={isAdmin} />
+            &#9776;
           </div>
 
-          <main className="main-content">
-            <Routes>
-              <Route path="/" element={<Home isLoggedIn={isLoggedIn} isAdmin={isAdmin} />} />
-              <Route path="/login" element={<Login onLogin={() => setIsLoggedIn(true)} />} />
-              {isLoggedIn && (
-                  <>
-                    <Route path="/people" element={<People />} />
-                    <Route path="/people/:email" element={<PersonPage />} />
-                    <Route path="/masthead" element={<Masthead />} />
-                    <Route path="/manuscripts" element={<Manuscripts />} />
-                    <Route path="/about" element={<About isLoggedIn={isLoggedIn} isAdmin={isAdmin} />} />
-                  </>
-              )}
-            </Routes>
-          </main>
+          <div className="header-center">
+            <h1 className="site-title">GOODNAME JOURNAL</h1>
+          </div>
+
+          <div className="header-right">
+            <p className="login-banner">
+              {isLoggedIn
+                  ? `Welcome back, ${isAdmin ? 'admin' : 'user'}: ${localStorage.getItem('userEmail')}!`
+                  : 'Please log in!'}
+            </p>
+            {isLoggedIn && (
+                <button className="logout-button" onClick={handleLogout}>
+                  Logout
+                </button>
+            )}
+          </div>
+        </header>
+
+        <div
+            className={`side-navbar ${isNavOpen ? 'open' : ''}`}
+            onMouseLeave={() => handleNavToggle(false)}
+        >
+          <Navbar isLoggedIn={isLoggedIn} isAdmin={isAdmin} />
         </div>
-      </BrowserRouter>
+
+        <main className="main-content">
+          <Routes>
+            <Route path="/" element={<Home isLoggedIn={isLoggedIn} isAdmin={isAdmin} />} />
+            <Route path="/login" element={<Login onLogin={() => setIsLoggedIn(true)} />} />
+            {isLoggedIn && (
+                <>
+                  <Route path="/people" element={<People />} />
+                  <Route path="/people/:email" element={<PersonPage />} />
+                  <Route path="/masthead" element={<Masthead />} />
+                  <Route path="/manuscripts" element={<Manuscripts />} />
+                  <Route path="/about" element={<About isLoggedIn={isLoggedIn} isAdmin={isAdmin} />} />
+                </>
+            )}
+          </Routes>
+        </main>
+      </div>
   );
 }
 
-export default App;
+export default function WrappedApp() {
+  return (
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+  );
+}
