@@ -16,7 +16,7 @@ describe('Navbar Component', () => {
   it('renders correct links when logged in', () => {
     render(
         <BrowserRouter>
-          <Navbar isLoggedIn={true} />
+          <Navbar isLoggedIn={true} isAdmin={true} />
         </BrowserRouter>
     );
 

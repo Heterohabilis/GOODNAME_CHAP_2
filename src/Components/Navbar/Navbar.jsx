@@ -35,10 +35,18 @@ NavLink.propTypes = {
   }).isRequired,
 };
 
-function Navbar({ isLoggedIn }) {
-  const filteredPages = ALL_PAGES.filter((p) =>
-      isLoggedIn ? p.label !== loginTitle : [homeTitle, loginTitle].includes(p.label)
-  );
+function Navbar({ isLoggedIn, isAdmin }) {
+  const filteredPages = ALL_PAGES.filter((p) => {
+    if (!isLoggedIn) {
+      return [homeTitle, loginTitle].includes(p.label);
+    }
+
+    if (!isAdmin && p.label === peopleTitle) {
+      return false;
+    }
+
+    return p.label !== loginTitle;
+  });
 
   return (
       <nav>
@@ -52,8 +60,10 @@ function Navbar({ isLoggedIn }) {
 }
 
 
+
 Navbar.propTypes = {
   isLoggedIn: propTypes.bool.isRequired,
+  isAdmin: propTypes.bool,
 };
 
 export default Navbar;

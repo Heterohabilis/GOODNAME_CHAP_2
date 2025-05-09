@@ -84,7 +84,7 @@ function App() {
               className={`side-navbar ${isNavOpen ? 'open' : ''}`}
               onMouseLeave={() => handleNavToggle(false)}
           >
-            <Navbar isLoggedIn={isLoggedIn} />
+            <Navbar isLoggedIn={isLoggedIn} isAdmin={isAdmin} />
           </div>
 
           <main className="main-content">
