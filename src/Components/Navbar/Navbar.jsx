@@ -2,32 +2,30 @@ import React from 'react';
 import propTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
+const homeTitle = 'Home';
+const peopleTitle = 'View All People';
+const manuscriptTitle = 'Dashboard';
+// const textTitle = 'Text';
+const aboutTitle = 'About';
+const mastheadTitle = 'Masthead';
+const loginTitle = 'Login';
 
-const homeTitle = 'Home'
-const peopleTitle = 'View All People'
-const manuscriptTitle = 'Dashboard'
-// const textTitle = 'Text'
-const aboutTitle = 'About'
-const mastheadTitle = 'Masthead'
-const loginTitle = 'Login'
-
-const PAGES = [
+const ALL_PAGES = [
   { label: homeTitle, destination: '/' },
   { label: peopleTitle, destination: '/people' },
   { label: mastheadTitle, destination: '/masthead' },
   { label: manuscriptTitle, destination: '/manuscripts' },
   // { label: textTitle, destination: '/texts'},
-  { label: aboutTitle, destination: '/about'},
-  // { label: 'Submit Manuscript', destination: '/manuscripts/create' },
+  { label: aboutTitle, destination: '/about' },
   { label: loginTitle, destination: '/login' },
 ];
 
 function NavLink({ page }) {
   const { label, destination } = page;
   return (
-    <li>
-      <Link to={destination}>{label}</Link>
-    </li>
+      <li>
+        <Link to={destination}>{label}</Link>
+      </li>
   );
 }
 NavLink.propTypes = {
@@ -37,15 +35,25 @@ NavLink.propTypes = {
   }).isRequired,
 };
 
-function Navbar() {
+function Navbar({ isLoggedIn }) {
+  const filteredPages = isLoggedIn
+      ? ALL_PAGES
+      : ALL_PAGES.filter((p) => [homeTitle, loginTitle].includes(p.label));
+
   return (
-    <nav>
-      <ul className="wrapper">
-        {PAGES.map((page) => <NavLink key={page.destination} page={page} />)}
-      </ul>
-    </nav>
+      <nav>
+        <ul className="wrapper">
+          {filteredPages.map((page) => (
+              <NavLink key={page.destination} page={page} />
+          ))}
+        </ul>
+      </nav>
   );
 }
+
+Navbar.propTypes = {
+  isLoggedIn: propTypes.bool.isRequired,
+};
 
 export default Navbar;
 
@@ -57,4 +65,4 @@ export {
   aboutTitle,
   mastheadTitle,
   loginTitle,
-}
+};

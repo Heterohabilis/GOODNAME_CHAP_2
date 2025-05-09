@@ -151,7 +151,7 @@ function SignUpPopup({ onClose }) {
 }
 
 
-function Login() {
+function Login({ onLogin }) {
     const [error, setError] = useState('');
     const [showRegisterPopup, setShowRegisterPopup] = useState(false);
     const [email, setEmail] = useState('');
@@ -164,6 +164,8 @@ function Login() {
             localStorage.setItem('isLoggedIn', 'true');
             localStorage.setItem('userEmail', email);
             alert('Logged in successfully!');
+            onLogin();                       // ✅ 通知 App 更新状态
+            window.location.href = '/';     // ✅ 跳转首页并刷新
         } catch (error) {
             console.error('Login error:', error);
             setError(`Login failed: ${error.message}`);
@@ -195,5 +197,9 @@ function Login() {
         </div>
     );
 }
+
+Login.propTypes = {
+    onLogin: propTypes.func.isRequired,
+};
 
 export default Login;

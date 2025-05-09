@@ -7,9 +7,12 @@ import {homeTitle, peopleTitle, manuscriptTitle, textTitle, aboutTitle, loginTit
 
 describe('Navbar Component', () => {
   it('renders navbar links correctly', () => {
-    render(<BrowserRouter>
-        <Navbar />
-      </BrowserRouter>);
+    render(
+        <BrowserRouter>
+          <Navbar isLoggedIn={true} />
+        </BrowserRouter>
+    );
+
 
     const homeLink = screen.getByRole('link', { name: homeTitle });
     expect(homeLink).toHaveAttribute('href', '/');

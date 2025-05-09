@@ -17,7 +17,6 @@ ErrorMessage.propTypes = {
 function UpdateTextForm({ visible, textData, cancel, fetchText, setError }) {
     const [text, setText] = useState(textData.text);
 
-
     const updateText = async (event) => {
         event.preventDefault();
         const updatedText = { text };
@@ -72,7 +71,7 @@ function findHome(data) {
     return data["HOME"] || null;
 }
 
-function Home() {
+function Home({ isLoggedIn }) {
     const [homeText, setHomeText] = useState(null);
     const [error, setError] = useState('');
     const [updatingText, setUpdatingText] = useState(false);
@@ -96,31 +95,21 @@ function Home() {
         fetchText();
     }, []);
 
+    if (error) return <ErrorMessage message={error} />;
+    if (!homeText) return <p>No home content available</p>;
 
-    if (error) {
-        return (
-            <ErrorMessage message={error} />
-        );
-    }
-
-    if (!homeText) {
-        return (
-            <p>No home content available</p>
-        );
-    }
-    
     return (
         <div className="wrapper">
             <h1>{homeText.title}</h1>
             <p>{homeText.text}</p>
-            <button 
-                type="button" 
-                onClick={() => setUpdatingText(true)}
-            >
-                Update Text
-            </button>
-            
-            {updatingText && (
+
+            {isLoggedIn && (
+                <button type="button" onClick={() => setUpdatingText(true)}>
+                    Update Text
+                </button>
+            )}
+
+            {isLoggedIn && updatingText && (
                 <UpdateTextForm
                     visible={updatingText}
                     textData={homeText}
@@ -129,9 +118,14 @@ function Home() {
                     setError={setError}
                 />
             )}
+
             {error && <ErrorMessage message={error} />}
         </div>
     );
 }
+
+Home.propTypes = {
+    isLoggedIn: propTypes.bool.isRequired,
+};
 
 export default Home;

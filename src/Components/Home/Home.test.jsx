@@ -18,7 +18,7 @@ describe('Home Component', () => {
     it('renders the home header', async () => {
         axios.get.mockResolvedValue({ data: homeResponse });
 
-        render(<Home />);
+        render(<Home isLoggedIn={true} />); // ✅ 传入登录状态
 
         await waitFor(() => {
             const heading = screen.getByRole('heading');
@@ -32,7 +32,5 @@ describe('Home Component', () => {
 
         const updateButton = screen.getByRole('button', { name: homeResponse.HOME.button });
         expect(updateButton).toBeInTheDocument();
-
-
     });
 });
