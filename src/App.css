@@ -376,3 +376,40 @@ p {
   background-color: var(--primary);
   color: white;
 }
+
+/* 分区布局结构 */
+.top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-md) var(--spacing-lg);
+  background-color: var(--background);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 100;
+}
+
+/* LOGO 居中 */
+.header-center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  flex: none;
+}
+
+/* 提示语和退出按钮右对齐 */
+.header-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.3rem;
+  margin-left: auto;
+}
+
+.login-banner {
+  font-size: 0.9rem;
+  font-style: italic;
+  color: var(--text-secondary);
+  margin: 0;
+}

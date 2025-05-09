@@ -37,15 +37,26 @@ function App() {
             >
               &#9776;
             </div>
-            <h1 className="site-title">GOODNAME JOURNAL</h1>
-            {isLoggedIn && (
-                <button className="logout-button" onClick={handleLogout}>
-                  Logout
-                </button>
-            )}
+
+            <div className="header-center">
+              <h1 className="site-title">GOODNAME JOURNAL</h1>
+            </div>
+
+            <div className="header-right">
+              <p className="login-banner">
+                {isLoggedIn
+                    ? `Welcome back, ${localStorage.getItem('userEmail')}!`
+                    : 'Please log in!'}
+              </p>
+              {isLoggedIn && (
+                  <button className="logout-button" onClick={handleLogout}>
+                    Logout
+                  </button>
+              )}
+            </div>
           </header>
 
-          {/* ✅ 用组件替换 nav 手写部分 */}
+
           <div
               className={`side-navbar ${isNavOpen ? 'open' : ''}`}
               onMouseLeave={() => handleNavToggle(false)}
