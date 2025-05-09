@@ -354,8 +354,11 @@ function Manuscript({ manuscript, fetchManuscripts, actionTable }) {
                     {isAdmin && (
                         <button type="button" onClick={() => setIsUpdating(true)}>Update State</button>
                     )}
-                    <button type="button" onClick={withdrawManuscript}>Withdraw</button>
+                    {!isAdmin && (
+                        <button type="button" onClick={withdrawManuscript}>Withdraw</button>
+                    )}
                 </div>
+
             )}
         </div>
     );
