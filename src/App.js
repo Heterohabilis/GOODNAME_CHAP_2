@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import axios from 'axios';
 import './App.css';
+import { BACKEND_URL } from './constants';
 
 import People from './Components/People';
 import Manuscripts from './Components/Manuscript';
@@ -11,9 +13,12 @@ import Home from './Components/Home';
 import Login from './Components/Login';
 import Navbar from './Components/Navbar';
 
+const ADMIN_CHECK_ENDPOINT = `${BACKEND_URL}/check_admin`;
+
 function App() {
   const [isNavOpen, setIsNavOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('isLoggedIn'));
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const handleNavToggle = (open) => {
     setIsNavOpen(open);
@@ -23,8 +28,27 @@ function App() {
     localStorage.removeItem('isLoggedIn');
     localStorage.removeItem('userEmail');
     setIsLoggedIn(false);
+    setIsAdmin(false);
     alert('Logged out successfully!');
   };
+
+  // ⛓️ 检查当前用户是否是 admin
+  useEffect(() => {
+    if (isLoggedIn) {
+      const email = localStorage.getItem('userEmail');
+      axios
+          .get(`${ADMIN_CHECK_ENDPOINT}/${email}`)
+          .then((res) => {
+            setIsAdmin(res.data.is_admin);
+          })
+          .catch((err) => {
+            console.error('Failed to check admin status:', err);
+            setIsAdmin(false);
+          });
+    } else {
+      setIsAdmin(false);
+    }
+  }, [isLoggedIn]);
 
   return (
       <BrowserRouter>
@@ -45,7 +69,7 @@ function App() {
             <div className="header-right">
               <p className="login-banner">
                 {isLoggedIn
-                    ? `Welcome back, ${localStorage.getItem('userEmail')}!`
+                    ? `Welcome back, ${isAdmin ? 'admin' : 'user'}: ${localStorage.getItem('userEmail')}!`
                     : 'Please log in!'}
               </p>
               {isLoggedIn && (
@@ -55,7 +79,6 @@ function App() {
               )}
             </div>
           </header>
-
 
           <div
               className={`side-navbar ${isNavOpen ? 'open' : ''}`}
