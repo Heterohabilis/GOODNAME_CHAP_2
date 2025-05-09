@@ -308,11 +308,13 @@ function Manuscript({ manuscript, fetchManuscripts, actionTable }) {
                 <div className="update-controls">
                     <select value={selectedAction} onChange={handleActionChange}>
                         <option value="" disabled>Select next action</option>
-                        {actionTable[stateAbbreviations[state]]?.map((action) => (
-                            <option key={action} value={action}>
-                                {actionDisplayNames[action] || action}
-                            </option>
-                        ))}
+                        {actionTable[stateAbbreviations[state]]
+                            ?.filter((action) => !(isAdmin && action === 'WITHDRAW'))
+                            .map((action) => (
+                                <option key={action} value={action}>
+                                    {actionDisplayNames[action] || action}
+                                </option>
+                            ))}
                     </select>
 
                     {(selectedAction === 'ASSIGN_REF' || selectedAction === 'DELETE_REF') && (
