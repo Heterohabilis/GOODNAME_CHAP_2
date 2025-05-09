@@ -6,6 +6,7 @@ import './Login.css';
 
 const LOGIN_ENDPOINT = `${BACKEND_URL}/login`;
 const REGISTER_ENDPOINT = `${BACKEND_URL}/register`;
+const PEOPLE_ENDPOINT = `${BACKEND_URL}/people`;
 
 function ErrorMessage({ message }) {
     return <div className="error-message">{message}</div>;
@@ -49,7 +50,6 @@ function LoginForm({ email, setEmail, password, setPassword, onSignUpClick, logi
 }
 
 LoginForm.propTypes = {
-    setError: propTypes.func.isRequired,
     email: propTypes.string.isRequired,
     setEmail: propTypes.func.isRequired,
     password: propTypes.string.isRequired,
@@ -64,92 +64,275 @@ function SignUpPopup({ onClose }) {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
     const [name, setName] = useState('');
-    const [role, setRole] = useState('author');
     const [affiliation, setAffiliation] = useState('');
+    const [isEmailChecked, setIsEmailChecked] = useState(false);
+    const [emailExists, setEmailExists] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [personData, setPersonData] = useState(null);
 
-    SignUpPopup.propTypes = {
-        onClose: propTypes.func.isRequired,
+    const checkEmailExists = async () => {
+        if (!email) {
+            setError('Please enter an email address');
+            return;
+        }
+        
+        setIsLoading(true);
+        try {
+            const response = await axios.get(`${PEOPLE_ENDPOINT}`);
+            const people = response.data;
+            
+            const person = Object.values(people).find(p => p.email === email);
+            
+            if (person) {
+                setEmailExists(true);
+                setPersonData(person);
+                setName(person.name || '');
+                setAffiliation(person.affiliation || '');
+            } else {
+                setEmailExists(false);
+                setPersonData(null);
+            }
+            
+            setIsEmailChecked(true);
+            setError('');
+        } catch (err) {
+            console.error('Error checking email:', err);
+            setError(`Failed to check email: ${err.message}`);
+        } finally {
+            setIsLoading(false);
+        }
     };
-
 
     const handleRegister = async () => {
         if (password !== confirmPassword) {
             setError('Passwords do not match');
             return;
         }
+
+        if (!isEmailChecked) {
+            setError('Please check if your email exists in our system first');
+            return;
+        }
+
+        setIsLoading(true);
         try {
-            await axios.post(REGISTER_ENDPOINT, {
-                username: email,
-                password: password,
-                name: name,
-                affiliation: affiliation,
-                level: role === 'editor' ? 1 : 0
-            });
+            if (!emailExists) {
+                try {
+                    await axios.put(`${PEOPLE_ENDPOINT}/create?user_id=admin`, {
+                        name: name,
+                        email: email,
+                        affiliation: affiliation,
+                        roles: "AU"
+                    });
+                } catch (err) {
+                    if (!err.response?.data?.message?.includes('duplicate')) {
+                        throw err;
+                    }
+                }
+            }
+
+            let userLevel = 0;
+
+            if (emailExists && personData) {
+                const hasNonAuthorRole = personData.roles && 
+                    Array.isArray(personData.roles) && 
+                    personData.roles.some(role => role !== 'AU');
+                
+                if (hasNonAuthorRole) {
+                    userLevel = 1;
+                }
+            }
+
+            try {
+                await axios.post(REGISTER_ENDPOINT, {
+                    username: email,
+                    password: password,
+                    name: name,
+                    affiliation: affiliation,
+                    level: userLevel
+                });
+            } catch (err) {
+                if (!err.response?.data?.message?.includes('duplicate email=')) {
+                    throw err;
+                }
+            }
+
             alert('Registered successfully!');
             onClose();
         } catch (error) {
             console.error('Registration error:', error);
-            setError(`Registration failed: ${error.message}`);
+            
+            let errorMessage = 'Registration failed: ';
+            
+            if (error.response) {
+                errorMessage += error.response.data?.message || error.response.data?.error || 
+                               String(error.response.data) || `Server returned ${error.response.status}`;
+            } else if (error.request) {
+                errorMessage += 'No response received from server';
+            } else {
+                errorMessage += error.message || 'Unknown error';
+            }
+            
+            setError(errorMessage);
+        } finally {
+            setIsLoading(false);
         }
     };
+
     return (
         <div className="popup">
-            <div className="popup-content">
-                {error && <div className="error-message">{error}</div>}
-                <form className="signup-form">
-                    <div className="signup-title">Sign Up</div>
-                    <label>Name</label>
-                    <input
-                        type="text"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        required
-                    />
-                    <label>Affiliation</label>
-                    <input
-                        type="text"
-                        value={affiliation}
-                        onChange={(e) => setAffiliation(e.target.value)}
-                        required
-                    />
-                    <label>Role</label>
-                    <select
-                        value={role}
-                        onChange={(e) => setRole(e.target.value)}
-                        required
-                    >
-                        <option value="author">Author</option>
-                        <option value="editor">Editor</option>
-                    </select>
-                    <label>Email</label>
-                    <input
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
-                    />
-                    <label>Password</label>
-                    <input
-                        type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                    />
-                    <label>Confirm Password</label>
-                    <input
-                        type="password"
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                        required
-                    />
-                    <button type="button" onClick={handleRegister}>Register</button>
-                    <button type="button" onClick={onClose}>Cancel</button>
+            <div className="popup-content" style={{ maxWidth: '500px', padding: '30px' }}>
+                {error && <div className="error-message" style={{ marginBottom: '15px' }}>{error}</div>}
+                
+                <form className="signup-form" style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                    <div className="signup-title" style={{ fontSize: '24px', marginBottom: '15px', textAlign: 'center' }}>Sign Up</div>
+                    
+                    <div style={{ marginBottom: '10px' }}>
+                        <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>Email</label>
+                        <div style={{ display: 'flex', gap: '10px' }}>
+                            <input
+                                type="email"
+                                value={email}
+                                onChange={(e) => {
+                                    setEmail(e.target.value);
+                                    setIsEmailChecked(false);
+                                }}
+                                required
+                                disabled={isEmailChecked}
+                                style={{ flex: '1', padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
+                            />
+                            <button 
+                                type="button" 
+                                onClick={checkEmailExists}
+                                disabled={isLoading || isEmailChecked}
+                                style={{ 
+                                    padding: '8px 15px', 
+                                    backgroundColor: isEmailChecked ? '#cccccc' : '#4CAF50',
+                                    color: 'white',
+                                    border: 'none',
+                                    borderRadius: '4px',
+                                    cursor: isEmailChecked ? 'default' : 'pointer'
+                                }}
+                            >
+                                {isLoading ? "Checking..." : "Check Email"}
+                            </button>
+                        </div>
+                    </div>
+
+                    {isEmailChecked && (
+                        <>
+                            {emailExists ? (
+                                <div className="info-message" style={{ 
+                                    backgroundColor: '#d4edda', 
+                                    color: '#155724', 
+                                    padding: '10px', 
+                                    borderRadius: '4px',
+                                    marginBottom: '15px' 
+                                }}>
+                                    Email found in our system. You can proceed with registration.
+                                </div>
+                            ) : (
+                                <div className="info-message" style={{ 
+                                    backgroundColor: '#d1ecf1', 
+                                    color: '#0c5460', 
+                                    padding: '10px', 
+                                    borderRadius: '4px',
+                                    marginBottom: '15px' 
+                                }}>
+                                    Email not found. Please provide additional information.
+                                </div>
+                            )}
+                            
+                            <div>
+                                <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>Full Name</label>
+                                <input
+                                    type="text"
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
+                                    required
+                                    disabled={emailExists && personData?.name}
+                                    style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
+                                />
+                            </div>
+                            
+                            <div>
+                                <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>Affiliation</label>
+                                <input
+                                    type="text"
+                                    value={affiliation}
+                                    onChange={(e) => setAffiliation(e.target.value)}
+                                    required
+                                    disabled={emailExists && personData?.affiliation}
+                                    style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
+                                />
+                            </div>
+
+                            <div>
+                                <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>Password</label>
+                                <input
+                                    type="password"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    required
+                                    style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
+                                />
+                            </div>
+                            
+                            <div>
+                                <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>Confirm Password</label>
+                                <input
+                                    type="password"
+                                    value={confirmPassword}
+                                    onChange={(e) => setConfirmPassword(e.target.value)}
+                                    required
+                                    style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
+                                />
+                            </div>
+                        </>
+                    )}
+
+                    <div style={{ display: 'flex', gap: '10px', marginTop: '20px', justifyContent: 'center' }}>
+                        <button 
+                            type="button" 
+                            onClick={handleRegister}
+                            disabled={!isEmailChecked || isLoading}
+                            style={{ 
+                                padding: '10px 20px', 
+                                backgroundColor: !isEmailChecked || isLoading ? '#cccccc' : '#4CAF50',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '4px',
+                                cursor: !isEmailChecked || isLoading ? 'default' : 'pointer',
+                                fontWeight: 'bold'
+                            }}
+                        >
+                            {isLoading ? "Processing..." : "Register"}
+                        </button>
+                        <button 
+                            type="button" 
+                            onClick={onClose}
+                            style={{ 
+                                padding: '10px 20px', 
+                                backgroundColor: '#f44336',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '4px',
+                                cursor: 'pointer',
+                                fontWeight: 'bold'
+                            }}
+                        >
+                            Cancel
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>
     );
 }
 
+SignUpPopup.propTypes = {
+    onClose: propTypes.func.isRequired,
+};
 
 function Login({ onLogin }) {
     const [error, setError] = useState('');
@@ -160,17 +343,24 @@ function Login({ onLogin }) {
     const login = async (event) => {
         event.preventDefault();
         try {
-            await axios.put(LOGIN_ENDPOINT, { username: email, password: password });
+            const response = await axios.put(LOGIN_ENDPOINT, { username: email, password: password });
             localStorage.setItem('isLoggedIn', 'true');
             localStorage.setItem('userEmail', email);
+            
+            // Check if the user is an admin (level >= 1)
+            const userData = response.data;
+            const isAdmin = userData.level >= 1;
+            localStorage.setItem('isAdmin', isAdmin.toString());
+            
             alert('Logged in successfully!');
             onLogin();
             window.location.href = '/';
         } catch (error) {
             console.error('Login error:', error);
-            setError(`Login failed: ${error.message}`);
+            setError(`Login failed: ${error.response?.data?.message || error.message}`);
             localStorage.removeItem('isLoggedIn');
             localStorage.removeItem('userEmail');
+            localStorage.removeItem('isAdmin');
         }
     };
 
@@ -180,7 +370,6 @@ function Login({ onLogin }) {
             <p>Please log in to continue</p>
 
             <LoginForm
-                setError={setError}
                 email={email}
                 setEmail={setEmail}
                 password={password}
