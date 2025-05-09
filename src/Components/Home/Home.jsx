@@ -48,7 +48,6 @@ function UpdateTextForm({ visible, textData, cancel, fetchText, setError }) {
                 value={text}
                 onChange={(e) => setText(e.target.value)}
             />
-
             <button type="button" onClick={cancel}>Cancel</button>
             <button type="submit">Update</button>
         </form>
@@ -71,7 +70,7 @@ function findHome(data) {
     return data["HOME"] || null;
 }
 
-function Home({ isLoggedIn }) {
+function Home({ isLoggedIn, isAdmin }) {
     const [homeText, setHomeText] = useState(null);
     const [error, setError] = useState('');
     const [updatingText, setUpdatingText] = useState(false);
@@ -103,13 +102,13 @@ function Home({ isLoggedIn }) {
             <h1>{homeText.title}</h1>
             <p>{homeText.text}</p>
 
-            {isLoggedIn && (
+            {isLoggedIn && isAdmin && (
                 <button type="button" onClick={() => setUpdatingText(true)}>
                     Update Text
                 </button>
             )}
 
-            {isLoggedIn && updatingText && (
+            {isLoggedIn && isAdmin && updatingText && (
                 <UpdateTextForm
                     visible={updatingText}
                     textData={homeText}
@@ -126,6 +125,7 @@ function Home({ isLoggedIn }) {
 
 Home.propTypes = {
     isLoggedIn: propTypes.bool.isRequired,
+    isAdmin: propTypes.bool.isRequired,
 };
 
 export default Home;

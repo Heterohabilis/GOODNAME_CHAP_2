@@ -89,7 +89,7 @@ function App() {
 
           <main className="main-content">
             <Routes>
-              <Route path="/" element={<Home isLoggedIn={isLoggedIn} />} />
+              <Route path="/" element={<Home isLoggedIn={isLoggedIn} isAdmin={isAdmin} />} />
               <Route path="/login" element={<Login onLogin={() => setIsLoggedIn(true)} />} />
               {isLoggedIn && (
                   <>
