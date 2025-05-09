@@ -58,9 +58,10 @@ function AddPersonForm({ visible, cancel, fetchPeople, setError }) {
             <select required id="roles" value={roles} onChange={changeRoles}>
                 <option value="" disabled>Select a role</option>
                 {Object.entries(availableRoles).map(([code, name]) => {
-                    const isAU = roles === 'AU';
-                    const isED = roles === 'ED';
-                    const isDisabled = (code === 'ED' && isAU) || (code === 'AU' && isED);
+                    const isAuthorSelected = roles === 'AU';
+                    const isNotAuthor = code !== 'AU';
+                    const isDisabled = (isAuthorSelected && isNotAuthor) || (roles !== '' && roles !== 'AU' && code === 'AU');
+
                     return (
                         <option key={code} value={code} disabled={isDisabled}>
                             {name}
@@ -134,9 +135,10 @@ function UpdatePersonForm({ visible, person, cancel, fetchPeople, setError }) {
                         <option value="" disabled>Select a role</option>
                         {Object.entries(availableRoles).map(([code, name]) => {
                             const otherRoles = roles.filter((_, i) => i !== index);
-                            const isAU = otherRoles.includes('AU');
-                            const isED = otherRoles.includes('ED');
-                            const isDisabled = (code === 'ED' && isAU) || (code === 'AU' && isED);
+                            const isAUSelected = otherRoles.includes('AU');
+                            const isNotAU = code !== 'AU';
+                            const isDisabled = (isAUSelected && isNotAU) || (code === 'AU' && otherRoles.length > 0 && otherRoles.some(r => r !== 'AU'));
+
                             return (
                                 <option key={code} value={code} disabled={isDisabled}>
                                     {name}
