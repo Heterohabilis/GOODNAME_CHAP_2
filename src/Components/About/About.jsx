@@ -11,7 +11,6 @@ function AddTextForm({ visible, cancel, fetchTexts, setError }) {
     const [title, setTitle] = useState('');
     const [text, setText] = useState('');
 
-
     const changeTitle = (event) => setTitle(event.target.value);
     const changeText = (event) => setText(event.target.value);
 
@@ -117,8 +116,8 @@ function findAbout(data) {
     return data["ABOUT"] || null;
 }
 
-function About() {
-    const [aboutText, setAboutText] = useState([]);
+function About({ isLoggedIn, isAdmin }) {
+    const [aboutText, setAboutText] = useState(null);
     const [error, setError] = useState('');
     const [updatingText, setUpdatingText] = useState(false);
 
@@ -148,8 +147,12 @@ function About() {
         <div className="wrapper">
             <h1>{aboutText.title}</h1>
             <p>{aboutText.text}</p>
-            <button type="button" onClick={() => setUpdatingText(true)}>Update Text</button>
-            {updatingText && (
+
+            {isLoggedIn && isAdmin && (
+                <button type="button" onClick={() => setUpdatingText(true)}>Update Text</button>
+            )}
+
+            {isLoggedIn && isAdmin && updatingText && (
                 <UpdateTextForm
                     visible={updatingText}
                     textData={aboutText}
@@ -158,9 +161,15 @@ function About() {
                     setError={setError}
                 />
             )}
+
             {error && <ErrorMessage message={error} />}
         </div>
     );
 }
+
+About.propTypes = {
+    isLoggedIn: propTypes.bool.isRequired,
+    isAdmin: propTypes.bool.isRequired,
+};
 
 export default About;

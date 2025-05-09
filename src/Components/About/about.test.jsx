@@ -15,22 +15,44 @@ const aboutResponse = {
 };
 
 describe('About Component', () => {
-    it('renders about details correctly after API call', async () => {
+    it('renders about details and update button for admin', async () => {
         axios.get.mockResolvedValue({ data: aboutResponse });
 
-        render(<About />);
+        render(<About isLoggedIn={true} isAdmin={true} />);
 
         await waitFor(() => {
-            const heading = screen.getByRole('heading');
-            expect(heading).toHaveTextContent(aboutResponse.ABOUT.title);
+            expect(screen.getByRole('heading')).toHaveTextContent(aboutResponse.ABOUT.title);
         });
 
         await waitFor(() => {
-            const aboutText = screen.getByText(aboutResponse.ABOUT.text);
-            expect(aboutText).toBeInTheDocument();
+            expect(screen.getByText(aboutResponse.ABOUT.text)).toBeInTheDocument();
         });
 
         const updateTextButton = screen.getByRole('button', { name: aboutResponse.ABOUT.button });
         expect(updateTextButton).toBeInTheDocument();
+    });
+
+    it('does NOT show update button for non-admin users', async () => {
+        axios.get.mockResolvedValue({ data: aboutResponse });
+
+        render(<About isLoggedIn={true} isAdmin={false} />);
+
+        await waitFor(() => {
+            expect(screen.getByText(aboutResponse.ABOUT.text)).toBeInTheDocument();
+        });
+
+        expect(screen.queryByRole('button', { name: aboutResponse.ABOUT.button })).not.toBeInTheDocument();
+    });
+
+    it('does NOT show update button for logged-out users', async () => {
+        axios.get.mockResolvedValue({ data: aboutResponse });
+
+        render(<About isLoggedIn={false} isAdmin={false} />);
+
+        await waitFor(() => {
+            expect(screen.getByText(aboutResponse.ABOUT.text)).toBeInTheDocument();
+        });
+
+        expect(screen.queryByRole('button', { name: aboutResponse.ABOUT.button })).not.toBeInTheDocument();
     });
 });

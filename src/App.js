@@ -97,7 +97,7 @@ function App() {
                     <Route path="/people/:email" element={<PersonPage />} />
                     <Route path="/masthead" element={<Masthead />} />
                     <Route path="/manuscripts" element={<Manuscripts />} />
-                    <Route path="/about" element={<About />} />
+                    <Route path="/about" element={<About isLoggedIn={isLoggedIn} isAdmin={isAdmin} />} />
                   </>
               )}
             </Routes>
