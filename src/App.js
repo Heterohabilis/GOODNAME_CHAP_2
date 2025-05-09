@@ -19,7 +19,7 @@ function App() {
   const [isNavOpen, setIsNavOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('isLoggedIn'));
   const [isAdmin, setIsAdmin] = useState(false);
-  const navigate = useNavigate(); // ✅ 获取跳转器
+  const navigate = useNavigate();
 
   const handleNavToggle = (open) => {
     setIsNavOpen(open);

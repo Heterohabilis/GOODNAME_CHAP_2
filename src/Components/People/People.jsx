@@ -57,10 +57,18 @@ function AddPersonForm({ visible, cancel, fetchPeople, setError }) {
             <label htmlFor="roles">Roles</label>
             <select required id="roles" value={roles} onChange={changeRoles}>
                 <option value="" disabled>Select a role</option>
-                {Object.entries(availableRoles).map(([code, name]) => (
-                    <option key={code} value={code}>{name}</option>
-                ))}
+                {Object.entries(availableRoles).map(([code, name]) => {
+                    const isAU = roles === 'AU';
+                    const isED = roles === 'ED';
+                    const isDisabled = (code === 'ED' && isAU) || (code === 'AU' && isED);
+                    return (
+                        <option key={code} value={code} disabled={isDisabled}>
+                            {name}
+                        </option>
+                    );
+                })}
             </select>
+
 
             <button type="button" onClick={cancel}>Cancel</button>
             <button type="submit">Submit</button>
@@ -117,11 +125,24 @@ function UpdatePersonForm({ visible, person, cancel, fetchPeople, setError }) {
             <label>Roles</label>
             {roles.map((role, index) => (
                 <div key={index} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <select value={role} onChange={(e) => setRoles(roles.map((r, i) => i === index ? e.target.value : r))}>
+                    <select
+                        value={role}
+                        onChange={(e) =>
+                            setRoles(roles.map((r, i) => (i === index ? e.target.value : r)))
+                        }
+                    >
                         <option value="" disabled>Select a role</option>
-                        {Object.entries(availableRoles).map(([code, name]) => (
-                            <option key={code} value={code}>{name}</option>
-                        ))}
+                        {Object.entries(availableRoles).map(([code, name]) => {
+                            const otherRoles = roles.filter((_, i) => i !== index);
+                            const isAU = otherRoles.includes('AU');
+                            const isED = otherRoles.includes('ED');
+                            const isDisabled = (code === 'ED' && isAU) || (code === 'AU' && isED);
+                            return (
+                                <option key={code} value={code} disabled={isDisabled}>
+                                    {name}
+                                </option>
+                            );
+                        })}
                     </select>
                     <button type="button" onClick={() => setRoles(roles.filter((_, i) => i !== index))}>Remove</button>
                 </div>
