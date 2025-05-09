@@ -181,6 +181,7 @@ function Manuscripts() {
 }
 
 function Manuscript({ manuscript, fetchManuscripts, actionTable }) {
+    const isAdmin = localStorage.getItem('isAdmin') === 'true';
     const { _id, title, author, author_email, abstract, text, editor, state, referees: assignedReferees = [] } = manuscript;
     const [isUpdating, setIsUpdating] = useState(false);
     const [selectedAction, setSelectedAction] = useState('');
@@ -332,7 +333,9 @@ function Manuscript({ manuscript, fetchManuscripts, actionTable }) {
                 </div>
             ) : (
                 <div className="button-group">
-                    <button type="button" onClick={() => setIsUpdating(true)}>Update State</button>
+                    {isAdmin && (
+                        <button type="button" onClick={() => setIsUpdating(true)}>Update State</button>
+                    )}
                     <button type="button" onClick={withdrawManuscript}>Withdraw</button>
                 </div>
             )}
