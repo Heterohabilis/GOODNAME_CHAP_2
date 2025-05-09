@@ -117,6 +117,8 @@ function Manuscripts() {
     const [addingManuscript, setAddingManuscript] = useState(false);
     const [actionTable, setActionTable] = useState({});
 
+    const isAdmin = localStorage.getItem('isAdmin') === 'true'; // ✅ 添加这行
+
     const stateDisplayNames = {
         SUBMITTED: 'Submitted',
         IN_REF_REV: 'Referee Review',
@@ -138,14 +140,13 @@ function Manuscripts() {
 
         axios.get(url)
             .then(({ data }) => {
-                const result = Array.isArray(data) ? data : Object.values(data); // 兼容不同格式
+                const result = Array.isArray(data) ? data : Object.values(data);
                 setManuscripts(result);
             })
             .catch((error) => {
                 setError(`There was a problem retrieving the manuscripts. ${error}`);
             });
     };
-
 
     useEffect(fetchManuscripts, []);
 
@@ -163,8 +164,13 @@ function Manuscripts() {
         <div className="wrapper">
             <header>
                 <h1>{manuscriptHeader}</h1>
-                <button type="button" onClick={() => setAddingManuscript(true)}>{manuscriptButton}</button>
+                {!isAdmin && (
+                    <button type="button" onClick={() => setAddingManuscript(true)}>
+                        {manuscriptButton}
+                    </button>
+                )}
             </header>
+
             {addingManuscript && (
                 <AddManuscriptForm
                     visible={addingManuscript}
@@ -173,7 +179,9 @@ function Manuscripts() {
                     setError={setError}
                 />
             )}
+
             {error && <div className="error-message">{error}</div>}
+
             <div className="manuscripts-columns">
                 {Object.keys(stateDisplayNames).map((state) => {
                     const manuscriptsInState = groupedManuscripts[state] || [];
@@ -197,6 +205,7 @@ function Manuscripts() {
         </div>
     );
 }
+
 
 function Manuscript({ manuscript, fetchManuscripts, actionTable }) {
     const isAdmin = localStorage.getItem('isAdmin') === 'true';
